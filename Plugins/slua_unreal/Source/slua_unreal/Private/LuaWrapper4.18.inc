@@ -1082,15 +1082,6 @@
             }
         }
 
-        static int ToStringShort(lua_State* L) {
-            {
-                CheckSelf(FRotator);
-                auto ret = self->ToStringShort();
-                LuaObject::push(L, ret);
-                return 1;
-            }
-        }
-
         static int ToCompactString(lua_State* L) {
             {
                 CheckSelf(FRotator);
@@ -1231,7 +1222,6 @@
             LuaObject::addMethod(L, "Normalize", Normalize, true);
             LuaObject::addMethod(L, "GetWindingAndRemainder", GetWindingAndRemainder, true);
             LuaObject::addMethod(L, "ToString", ToString, true);
-            LuaObject::addMethod(L, "ToStringShort", ToStringShort, true);
             LuaObject::addMethod(L, "ToCompactString", ToCompactString, true);
             LuaObject::addMethod(L, "InitFromString", InitFromString, true);
             LuaObject::addMethod(L, "ContainsNaN", ContainsNaN, true);
@@ -1265,29 +1255,6 @@
                 }
                 auto& InTranslationRef = *InTranslation;
                 auto self = new FTransform(InTranslationRef);
-                LuaObject::push<FTransform>(L, "FTransform", self, UD_AUTOGC | UD_VALUETYPE);
-                return 1;
-            }
-            if (argc == 4) {
-                auto InRotation = LuaObject::checkValue<FRotator*>(L, 2);
-                if (!InRotation) {
-                    luaL_error(L, "%s argument 2 is nullptr", __FUNCTION__);
-                    return 0;
-                }
-                auto& InRotationRef = *InRotation;
-                auto InTranslation = LuaObject::checkValue<FVector*>(L, 3);
-                if (!InTranslation) {
-                    luaL_error(L, "%s argument 3 is nullptr", __FUNCTION__);
-                    return 0;
-                }
-                auto& InTranslationRef = *InTranslation;
-                auto InScale3D = LuaObject::checkValue<FVector*>(L, 4);
-                if (!InScale3D) {
-                    luaL_error(L, "%s argument 4 is nullptr", __FUNCTION__);
-                    return 0;
-                }
-                auto& InScale3DRef = *InScale3D;
-                auto self = new FTransform(InRotationRef, InTranslationRef, InScale3DRef);
                 LuaObject::push<FTransform>(L, "FTransform", self, UD_AUTOGC | UD_VALUETYPE);
                 return 1;
             }
@@ -2877,24 +2844,6 @@
             }
         }
 
-        static int ToRGBEFast(lua_State* L) {
-            {
-                CheckSelf(FLinearColor);
-                if (lua_isnoneornil(L, 2)) {
-                    auto ret = __newFColor();
-                    *ret = self->ToRGBEFast();
-                    LuaObject::push<FColor>(L, "FColor", ret, UD_AUTOGC | UD_VALUETYPE);
-                } else {
-                    auto ret = LuaObject::checkValue<FColor*>(L, 2);
-                    if (!ret)
-                        luaL_error(L, "arg %d expect FColor type.", 2);
-                    *ret = self->ToRGBEFast();
-                    lua_pushvalue(L, 2);
-                }
-                return 1;
-            }
-        }
-
         static int Component(lua_State* L) {
             {
                 CheckSelf(FLinearColor);
@@ -3014,24 +2963,6 @@
             }
         }
 
-        static int QuantizeFast(lua_State* L) {
-            {
-                CheckSelf(FLinearColor);
-                if (lua_isnoneornil(L, 2)) {
-                    auto ret = __newFColor();
-                    *ret = self->QuantizeFast();
-                    LuaObject::push<FColor>(L, "FColor", ret, UD_AUTOGC | UD_VALUETYPE);
-                } else {
-                    auto ret = LuaObject::checkValue<FColor*>(L, 2);
-                    if (!ret)
-                        luaL_error(L, "arg %d expect FColor type.", 2);
-                    *ret = self->QuantizeFast();
-                    lua_pushvalue(L, 2);
-                }
-                return 1;
-            }
-        }
-
         static int QuantizeRound(lua_State* L) {
             {
                 CheckSelf(FLinearColor);
@@ -3063,25 +2994,6 @@
                     if (!ret)
                         luaL_error(L, "arg %d expect FColor type.", 3);
                     *ret = self->ToFColor(bSRGB);
-                    lua_pushvalue(L, 3);
-                }
-                return 1;
-            }
-        }
-
-        static int ToColorFast(lua_State* L) {
-            {
-                CheckSelf(FLinearColor);
-                auto bSRGB = LuaObject::checkValue<bool>(L, 2);
-                if (lua_isnoneornil(L, 3)) {
-                    auto ret = __newFColor();
-                    *ret = self->ToColorFast(bSRGB);
-                    LuaObject::push<FColor>(L, "FColor", ret, UD_AUTOGC | UD_VALUETYPE);
-                } else {
-                    auto ret = LuaObject::checkValue<FColor*>(L, 3);
-                    if (!ret)
-                        luaL_error(L, "arg %d expect FColor type.", 3);
-                    *ret = self->ToColorFast(bSRGB);
                     lua_pushvalue(L, 3);
                 }
                 return 1;
@@ -3341,7 +3253,6 @@
             LuaObject::addField(L, "Blue", get_Blue, nullptr, false);
             LuaObject::addField(L, "Yellow", get_Yellow, nullptr, false);
             LuaObject::addMethod(L, "ToRGBE", ToRGBE, true);
-            LuaObject::addMethod(L, "ToRGBEFast", ToRGBEFast, true);
             LuaObject::addMethod(L, "Component", Component, true);
             LuaObject::addMethod(L, "GetClamped", GetClamped, true);
             LuaObject::addMethod(L, "Equals", Equals, true);
@@ -3349,10 +3260,8 @@
             LuaObject::addMethod(L, "LinearRGBToHSV", LinearRGBToHSV, true);
             LuaObject::addMethod(L, "HSVToLinearRGB", HSVToLinearRGB, true);
             LuaObject::addMethod(L, "Quantize", Quantize, true);
-            LuaObject::addMethod(L, "QuantizeFast", QuantizeFast, true);
             LuaObject::addMethod(L, "QuantizeRound", QuantizeRound, true);
             LuaObject::addMethod(L, "ToFColor", ToFColor, true);
-            LuaObject::addMethod(L, "ToColorFast", ToColorFast, true);
             LuaObject::addMethod(L, "Desaturate", Desaturate, true);
             LuaObject::addMethod(L, "GetMax", GetMax, true);
             LuaObject::addMethod(L, "IsAlmostBlack", IsAlmostBlack, true);
@@ -4904,15 +4813,6 @@
             }
         }
 
-        static int ToStringShort(lua_State* L) {
-            {
-                CheckSelf(FVector);
-                auto ret = self->ToStringShort();
-                LuaObject::push(L, ret);
-                return 1;
-            }
-        }
-
         static int ToCompactString(lua_State* L) {
             {
                 CheckSelf(FVector);
@@ -5597,7 +5497,6 @@
             LuaObject::addMethod(L, "ContainsNaN", ContainsNaN, true);
             LuaObject::addMethod(L, "IsUnit", IsUnit, true);
             LuaObject::addMethod(L, "ToString", ToString, true);
-            LuaObject::addMethod(L, "ToStringShort", ToStringShort, true);
             LuaObject::addMethod(L, "ToCompactString", ToCompactString, true);
             LuaObject::addMethod(L, "InitFromString", InitFromString, true);
             LuaObject::addMethod(L, "UnitCartesianToSpherical", UnitCartesianToSpherical, true);
