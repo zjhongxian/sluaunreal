@@ -22,18 +22,21 @@ void FProflierMemNode::Serialize(FArchive& Ar)
         infoList.Empty();
         int32 infoChildNum = 0;
         Ar << infoChildNum;
+        infoList.Reserve(infoChildNum);
+
         for (int i = 0; i < infoChildNum; ++i)
         {
-        	TMap<int, TSharedPtr<FileMemInfo>> node;
+        	TMap<int, FileMemInfo> node;
             int32 nodeChildeNum = 0;
             Ar << nodeChildeNum;
+            node.Reserve(nodeChildeNum);
             for (int childIndex = 0; childIndex < nodeChildeNum; ++childIndex)
             {
                 int key;
                 Ar << key;
 
-                TSharedPtr<FileMemInfo> fielMemInfo = MakeShared<FileMemInfo>();
-                fielMemInfo->Serialize(Ar);
+                FileMemInfo fielMemInfo;
+                fielMemInfo.Serialize(Ar);
 
                 node.Add(key, fielMemInfo);
             }
@@ -43,16 +46,17 @@ void FProflierMemNode::Serialize(FArchive& Ar)
         }
 
         parentFileMap.Empty();
-        TMap<FString, TSharedPtr<FileMemInfo>> ParentFileMap;
-        int32 ParentFileChildNum = 0;
-        Ar << ParentFileChildNum;
-        for (int i = 0; i < ParentFileChildNum; ++i)
+        int32 parentFileChildNum = 0;
+        Ar << parentFileChildNum;
+        parentFileMap.Reserve(parentFileChildNum);
+
+        for (int i = 0; i < parentFileChildNum; ++i)
         {
-            FString key;
+            uint32 key;
             Ar << key;
-            TSharedPtr<FileMemInfo> value;
-            value->Serialize(Ar);
-            ParentFileMap.Add(key, value);
+            FileMemInfo value;
+            value.Serialize(Ar);
+            parentFileMap.Add(key, value);
         }
     }
     else if (Ar.IsSaving())
@@ -69,26 +73,18 @@ void FProflierMemNode::Serialize(FArchive& Ar)
             for (auto infoItem : infoMap.Value)
             {
                 Ar << infoItem.Key;
-                infoItem.Value->Serialize(Ar);
+                infoItem.Value.Serialize(Ar);
             }
             Ar << infoMap.Key;
         }
 
-        int32 ParentFileChildNum = parentFileMap.Num();
-        Ar << ParentFileChildNum;
+        int32 parentFileChildNum = parentFileMap.Num();
+        Ar << parentFileChildNum;
 
         for (auto fileMap : parentFileMap)
         {
             Ar << fileMap.Key;
-            if (fileMap.Value.IsValid())
-            {
-                fileMap.Value->Serialize(Ar);
-            }
-            else
-            {
-                TSharedPtr<FileMemInfo> emptyFileInfo = MakeShared<FileMemInfo>();
-                emptyFileInfo->Serialize(Ar);
-            }
+            fileMap.Value.Serialize(Ar);
         }
     }
 }

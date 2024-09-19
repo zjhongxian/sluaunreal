@@ -174,6 +174,37 @@ namespace NS_SLUA {
         return false;
     }
 
+    lua_CFunction getCFunction(lua_Debug &ar)
+    {
+        auto ci = ar.i_ci;
+#if LUA_VERSION_NUM >= 504
+#if LUA_VERSION_RELEASE_NUM >= 50406
+        auto func = s2v(ci->func.p);
+#else
+        auto func = s2v(ci->func.p);
+#endif
+        if (ttislcf(func)) 
+        {   
+            return fvalue(func);
+        }
+        else if (ttisCclosure(func))
+        {
+            return clCvalue(func)->f;
+        }
+#else
+        auto func = ci->func;
+        if (ttislcf(func))
+        {
+            return fvalue(func);
+        }
+        else if (ttisCclosure(func))
+        {
+            return clCvalue(func)->f;
+        }
+#endif
+        return nullptr;
+    }
+
     bool getMemInfo(LuaState* ls, size_t size, LuaMemInfo& info) {
         if (!ls->memTrack) return false;
         // skip if lua_State is null, lua_State hadn't binded to LS
@@ -186,16 +217,15 @@ namespace NS_SLUA {
         
         for (int i = 0;;i++) {
             lua_Debug ar;
-            AutoStack as(L);
 #if LUA_VERSION_RELEASE_NUM >= 50406
-            if (lua_getstack(L, i, &ar) && L->base_ci.func.p != nullptr && lua_getinfo(L, "nSlf", &ar)) {
+            if (lua_getstack(L, i, &ar) && L->base_ci.func.p != nullptr && lua_getinfo(L, "nSl", &ar)) {
 #else
-            if (lua_getstack(L, i, &ar) && lua_getinfo(L, "nSlf", &ar)) {
+            if (lua_getstack(L, i, &ar) && lua_getinfo(L, "nSl", &ar)) {
 #endif
                 if (strcmp(ar.what, "C") == 0) {
                     if (ar.name) {
                         firstCName += UTF8_TO_TCHAR(ar.name);
-                        lua_CFunction cfunc = lua_tocfunction(L, -1);
+                        lua_CFunction cfunc = getCFunction(ar);
                         if (cfunc == LuaProfiler::resumeFunc) {
                             if (lua_isthread(L, 1)) {
                                 lua_State* L1 = lua_tothread(L, 1);

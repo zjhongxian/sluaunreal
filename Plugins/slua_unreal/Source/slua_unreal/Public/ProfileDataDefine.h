@@ -16,10 +16,10 @@ typedef TQueue<MemoryFramePtr, EQueueMode::Mpsc> MemoryFrameQueue;
 typedef TSharedPtr<FunctionProfileNode> ProfileNodePtr;
 typedef TMap<int64, NS_SLUA::LuaMemInfo> LuaMemInfoMap;
 typedef TArray<TSharedPtr<FunctionProfileCallInfo>> ProfileCallInfoArray;
-typedef TMap<uint32, TMap<int, TSharedPtr<FileMemInfo>>> MemFileInfoMap;
+typedef TMap<uint32, TMap<int, FileMemInfo>> MemFileInfoMap;
 typedef TArray<TSharedPtr<FProflierMemNode>> MemNodeInfoList;
 typedef TArray<TSharedPtr<FileMemInfo>> ShownMemInfoList;
-typedef TMap<uint32, TSharedPtr<FileMemInfo>> ParentFileMap;
+typedef TMap<uint32, FileMemInfo> ParentFileMap;
 typedef TArray<TArray<TSharedPtr<FunctionProfileNode>>> ProfileNodeArrayArray;
 
 static const int cMaxSampleNum = 250;
@@ -274,5 +274,4 @@ struct SLUA_UNREAL_API MemoryFrame
     bool bMemoryTick;
     TArray<NS_SLUA::LuaMemInfo> memoryInfoList;
     TArray<NS_SLUA::LuaMemInfo> memoryIncrease;
-    TArray<NS_SLUA::LuaMemInfo> memoryDecrease;
 };

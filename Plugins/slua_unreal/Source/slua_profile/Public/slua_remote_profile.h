@@ -158,6 +158,5 @@ namespace NS_SLUA {
         //Memory infomation
         TArray<NS_SLUA::LuaMemInfo> memoryInfoList;
         TArray<NS_SLUA::LuaMemInfo> memoryIncrease;
-        TArray<NS_SLUA::LuaMemInfo> memoryDecrease;
     };
 }
