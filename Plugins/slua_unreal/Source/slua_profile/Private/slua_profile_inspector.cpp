@@ -58,7 +58,6 @@ SProfilerInspector::SProfilerInspector()
     lastLuaTotalMemSize = 0.0f;
     maxProfileSamplesCostTime = 0.0f;
     avgProfileSamplesCostTime = 0.0f;
-    isMemMouseButtonUp = false;
     hasCleared = false;
     needProfilerCleared = false;
     mouseUpPoint = FVector2D(-1.0f, 0.0f);
