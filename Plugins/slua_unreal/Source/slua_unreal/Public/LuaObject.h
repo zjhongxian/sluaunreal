@@ -143,6 +143,7 @@ namespace NS_SLUA {
     #define UD_REFERENCE 1<<8
     #define UD_VALUETYPE 1<<9 // flag it's a valuetype, don't cache value by ptr
     #define UD_NETTYPE 1<<10 // flag it's a net replicate property
+    #define UD_CONST 1<<11 // flag it's a const struct
 
     struct UDBase {
         uint32 flag;
@@ -779,8 +780,8 @@ namespace NS_SLUA {
         static void unlinkProp(lua_State* L, void* prop);
 
         template<class T>
-        static int pushAndLink(lua_State* L, const void* parent, const char* tn, const T* v, void* proxy, uint16 replicatedIndex) {
-            NewNetStructUD(T, v, UD_NOFLAG)
+        static int pushAndLink(lua_State* L, const void* parent, const char* tn, const T* v, void* proxy, uint16 replicatedIndex, uint32 flag) {
+            NewNetStructUD(T, v, flag)
             luaL_getmetatable(L, tn);
             lua_setmetatable(L, -2);
             linkProp(L, void_cast(parent), void_cast(udptr));

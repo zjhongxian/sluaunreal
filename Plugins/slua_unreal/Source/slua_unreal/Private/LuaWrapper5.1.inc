@@ -1399,6 +1399,7 @@
         static int set_X(lua_State* L) {
             CheckSelf(FIntPoint);
             auto& X = self->X;
+            CheckIfConst(FIntPoint)
             auto XIn = LuaObject::checkValue<int>(L, 2);
             X = XIn;
             LuaObject::push(L, XIn);
@@ -1416,6 +1417,7 @@
         static int set_Y(lua_State* L) {
             CheckSelf(FIntPoint);
             auto& Y = self->Y;
+            CheckIfConst(FIntPoint)
             auto YIn = LuaObject::checkValue<int>(L, 2);
             Y = YIn;
             LuaObject::push(L, YIn);
@@ -1425,13 +1427,13 @@
 
         static int get_ZeroValue(lua_State* L) {
             auto& ZeroValue = FIntPoint::ZeroValue;
-            LuaObject::push<FIntPoint>(L, "FIntPoint", &ZeroValue);
+            LuaObject::push<FIntPoint>(L, "FIntPoint", &ZeroValue, UD_VALUETYPE | UD_CONST);
             return 1;
         }
 
         static int get_NoneValue(lua_State* L) {
             auto& NoneValue = FIntPoint::NoneValue;
-            LuaObject::push<FIntPoint>(L, "FIntPoint", &NoneValue);
+            LuaObject::push<FIntPoint>(L, "FIntPoint", &NoneValue, UD_VALUETYPE | UD_CONST);
             return 1;
         }
 
@@ -1779,6 +1781,7 @@
         static int set_X(lua_State* L) {
             CheckSelf(FIntVector);
             auto& X = self->X;
+            CheckIfConst(FIntVector)
             auto XIn = LuaObject::checkValue<int>(L, 2);
             X = XIn;
             LuaObject::push(L, XIn);
@@ -1796,6 +1799,7 @@
         static int set_Y(lua_State* L) {
             CheckSelf(FIntVector);
             auto& Y = self->Y;
+            CheckIfConst(FIntVector)
             auto YIn = LuaObject::checkValue<int>(L, 2);
             Y = YIn;
             LuaObject::push(L, YIn);
@@ -1813,6 +1817,7 @@
         static int set_Z(lua_State* L) {
             CheckSelf(FIntVector);
             auto& Z = self->Z;
+            CheckIfConst(FIntVector)
             auto ZIn = LuaObject::checkValue<int>(L, 2);
             Z = ZIn;
             LuaObject::push(L, ZIn);
@@ -1822,13 +1827,13 @@
 
         static int get_ZeroValue(lua_State* L) {
             auto& ZeroValue = FIntVector::ZeroValue;
-            LuaObject::push<FIntVector>(L, "FIntVector", &ZeroValue);
+            LuaObject::push<FIntVector>(L, "FIntVector", &ZeroValue, UD_VALUETYPE | UD_CONST);
             return 1;
         }
 
         static int get_NoneValue(lua_State* L) {
             auto& NoneValue = FIntVector::NoneValue;
-            LuaObject::push<FIntVector>(L, "FIntVector", &NoneValue);
+            LuaObject::push<FIntVector>(L, "FIntVector", &NoneValue, UD_VALUETYPE | UD_CONST);
             return 1;
         }
 
@@ -2129,6 +2134,7 @@
         static int set_X(lua_State* L) {
             CheckSelf(FIntVector4);
             auto& X = self->X;
+            CheckIfConst(FIntVector4)
             auto XIn = LuaObject::checkValue<int>(L, 2);
             X = XIn;
             LuaObject::push(L, XIn);
@@ -2146,6 +2152,7 @@
         static int set_Y(lua_State* L) {
             CheckSelf(FIntVector4);
             auto& Y = self->Y;
+            CheckIfConst(FIntVector4)
             auto YIn = LuaObject::checkValue<int>(L, 2);
             Y = YIn;
             LuaObject::push(L, YIn);
@@ -2163,6 +2170,7 @@
         static int set_Z(lua_State* L) {
             CheckSelf(FIntVector4);
             auto& Z = self->Z;
+            CheckIfConst(FIntVector4)
             auto ZIn = LuaObject::checkValue<int>(L, 2);
             Z = ZIn;
             LuaObject::push(L, ZIn);
@@ -2180,6 +2188,7 @@
         static int set_W(lua_State* L) {
             CheckSelf(FIntVector4);
             auto& W = self->W;
+            CheckIfConst(FIntVector4)
             auto WIn = LuaObject::checkValue<int>(L, 2);
             W = WIn;
             LuaObject::push(L, WIn);
@@ -2445,6 +2454,7 @@
         static int set_R(lua_State* L) {
             CheckSelf(FLinearColor);
             auto& R = self->R;
+            CheckIfConst(FLinearColor)
             auto RIn = LuaObject::checkValue<float>(L, 2);
             R = RIn;
             LuaObject::push(L, RIn);
@@ -2462,6 +2472,7 @@
         static int set_G(lua_State* L) {
             CheckSelf(FLinearColor);
             auto& G = self->G;
+            CheckIfConst(FLinearColor)
             auto GIn = LuaObject::checkValue<float>(L, 2);
             G = GIn;
             LuaObject::push(L, GIn);
@@ -2479,6 +2490,7 @@
         static int set_B(lua_State* L) {
             CheckSelf(FLinearColor);
             auto& B = self->B;
+            CheckIfConst(FLinearColor)
             auto BIn = LuaObject::checkValue<float>(L, 2);
             B = BIn;
             LuaObject::push(L, BIn);
@@ -2496,6 +2508,7 @@
         static int set_A(lua_State* L) {
             CheckSelf(FLinearColor);
             auto& A = self->A;
+            CheckIfConst(FLinearColor)
             auto AIn = LuaObject::checkValue<float>(L, 2);
             A = AIn;
             LuaObject::push(L, AIn);
@@ -2505,49 +2518,49 @@
 
         static int get_White(lua_State* L) {
             auto& White = FLinearColor::White;
-            LuaObject::push<FLinearColor>(L, "FLinearColor", &White);
+            LuaObject::push<FLinearColor>(L, "FLinearColor", &White, UD_VALUETYPE | UD_CONST);
             return 1;
         }
 
         static int get_Gray(lua_State* L) {
             auto& Gray = FLinearColor::Gray;
-            LuaObject::push<FLinearColor>(L, "FLinearColor", &Gray);
+            LuaObject::push<FLinearColor>(L, "FLinearColor", &Gray, UD_VALUETYPE | UD_CONST);
             return 1;
         }
 
         static int get_Black(lua_State* L) {
             auto& Black = FLinearColor::Black;
-            LuaObject::push<FLinearColor>(L, "FLinearColor", &Black);
+            LuaObject::push<FLinearColor>(L, "FLinearColor", &Black, UD_VALUETYPE | UD_CONST);
             return 1;
         }
 
         static int get_Transparent(lua_State* L) {
             auto& Transparent = FLinearColor::Transparent;
-            LuaObject::push<FLinearColor>(L, "FLinearColor", &Transparent);
+            LuaObject::push<FLinearColor>(L, "FLinearColor", &Transparent, UD_VALUETYPE | UD_CONST);
             return 1;
         }
 
         static int get_Red(lua_State* L) {
             auto& Red = FLinearColor::Red;
-            LuaObject::push<FLinearColor>(L, "FLinearColor", &Red);
+            LuaObject::push<FLinearColor>(L, "FLinearColor", &Red, UD_VALUETYPE | UD_CONST);
             return 1;
         }
 
         static int get_Green(lua_State* L) {
             auto& Green = FLinearColor::Green;
-            LuaObject::push<FLinearColor>(L, "FLinearColor", &Green);
+            LuaObject::push<FLinearColor>(L, "FLinearColor", &Green, UD_VALUETYPE | UD_CONST);
             return 1;
         }
 
         static int get_Blue(lua_State* L) {
             auto& Blue = FLinearColor::Blue;
-            LuaObject::push<FLinearColor>(L, "FLinearColor", &Blue);
+            LuaObject::push<FLinearColor>(L, "FLinearColor", &Blue, UD_VALUETYPE | UD_CONST);
             return 1;
         }
 
         static int get_Yellow(lua_State* L) {
             auto& Yellow = FLinearColor::Yellow;
-            LuaObject::push<FLinearColor>(L, "FLinearColor", &Yellow);
+            LuaObject::push<FLinearColor>(L, "FLinearColor", &Yellow, UD_VALUETYPE | UD_CONST);
             return 1;
         }
 
@@ -3129,6 +3142,7 @@
         static int set_B(lua_State* L) {
             CheckSelf(FColor);
             auto& B = self->B;
+            CheckIfConst(FColor)
             auto BIn = LuaObject::checkValue<uint8>(L, 2);
             B = BIn;
             LuaObject::push(L, BIn);
@@ -3146,6 +3160,7 @@
         static int set_G(lua_State* L) {
             CheckSelf(FColor);
             auto& G = self->G;
+            CheckIfConst(FColor)
             auto GIn = LuaObject::checkValue<uint8>(L, 2);
             G = GIn;
             LuaObject::push(L, GIn);
@@ -3163,6 +3178,7 @@
         static int set_R(lua_State* L) {
             CheckSelf(FColor);
             auto& R = self->R;
+            CheckIfConst(FColor)
             auto RIn = LuaObject::checkValue<uint8>(L, 2);
             R = RIn;
             LuaObject::push(L, RIn);
@@ -3180,6 +3196,7 @@
         static int set_A(lua_State* L) {
             CheckSelf(FColor);
             auto& A = self->A;
+            CheckIfConst(FColor)
             auto AIn = LuaObject::checkValue<uint8>(L, 2);
             A = AIn;
             LuaObject::push(L, AIn);
@@ -3189,85 +3206,85 @@
 
         static int get_White(lua_State* L) {
             auto& White = FColor::White;
-            LuaObject::push<FColor>(L, "FColor", &White);
+            LuaObject::push<FColor>(L, "FColor", &White, UD_VALUETYPE | UD_CONST);
             return 1;
         }
 
         static int get_Black(lua_State* L) {
             auto& Black = FColor::Black;
-            LuaObject::push<FColor>(L, "FColor", &Black);
+            LuaObject::push<FColor>(L, "FColor", &Black, UD_VALUETYPE | UD_CONST);
             return 1;
         }
 
         static int get_Transparent(lua_State* L) {
             auto& Transparent = FColor::Transparent;
-            LuaObject::push<FColor>(L, "FColor", &Transparent);
+            LuaObject::push<FColor>(L, "FColor", &Transparent, UD_VALUETYPE | UD_CONST);
             return 1;
         }
 
         static int get_Red(lua_State* L) {
             auto& Red = FColor::Red;
-            LuaObject::push<FColor>(L, "FColor", &Red);
+            LuaObject::push<FColor>(L, "FColor", &Red, UD_VALUETYPE | UD_CONST);
             return 1;
         }
 
         static int get_Green(lua_State* L) {
             auto& Green = FColor::Green;
-            LuaObject::push<FColor>(L, "FColor", &Green);
+            LuaObject::push<FColor>(L, "FColor", &Green, UD_VALUETYPE | UD_CONST);
             return 1;
         }
 
         static int get_Blue(lua_State* L) {
             auto& Blue = FColor::Blue;
-            LuaObject::push<FColor>(L, "FColor", &Blue);
+            LuaObject::push<FColor>(L, "FColor", &Blue, UD_VALUETYPE | UD_CONST);
             return 1;
         }
 
         static int get_Yellow(lua_State* L) {
             auto& Yellow = FColor::Yellow;
-            LuaObject::push<FColor>(L, "FColor", &Yellow);
+            LuaObject::push<FColor>(L, "FColor", &Yellow, UD_VALUETYPE | UD_CONST);
             return 1;
         }
 
         static int get_Cyan(lua_State* L) {
             auto& Cyan = FColor::Cyan;
-            LuaObject::push<FColor>(L, "FColor", &Cyan);
+            LuaObject::push<FColor>(L, "FColor", &Cyan, UD_VALUETYPE | UD_CONST);
             return 1;
         }
 
         static int get_Magenta(lua_State* L) {
             auto& Magenta = FColor::Magenta;
-            LuaObject::push<FColor>(L, "FColor", &Magenta);
+            LuaObject::push<FColor>(L, "FColor", &Magenta, UD_VALUETYPE | UD_CONST);
             return 1;
         }
 
         static int get_Orange(lua_State* L) {
             auto& Orange = FColor::Orange;
-            LuaObject::push<FColor>(L, "FColor", &Orange);
+            LuaObject::push<FColor>(L, "FColor", &Orange, UD_VALUETYPE | UD_CONST);
             return 1;
         }
 
         static int get_Purple(lua_State* L) {
             auto& Purple = FColor::Purple;
-            LuaObject::push<FColor>(L, "FColor", &Purple);
+            LuaObject::push<FColor>(L, "FColor", &Purple, UD_VALUETYPE | UD_CONST);
             return 1;
         }
 
         static int get_Turquoise(lua_State* L) {
             auto& Turquoise = FColor::Turquoise;
-            LuaObject::push<FColor>(L, "FColor", &Turquoise);
+            LuaObject::push<FColor>(L, "FColor", &Turquoise, UD_VALUETYPE | UD_CONST);
             return 1;
         }
 
         static int get_Silver(lua_State* L) {
             auto& Silver = FColor::Silver;
-            LuaObject::push<FColor>(L, "FColor", &Silver);
+            LuaObject::push<FColor>(L, "FColor", &Silver, UD_VALUETYPE | UD_CONST);
             return 1;
         }
 
         static int get_Emerald(lua_State* L) {
             auto& Emerald = FColor::Emerald;
-            LuaObject::push<FColor>(L, "FColor", &Emerald);
+            LuaObject::push<FColor>(L, "FColor", &Emerald, UD_VALUETYPE | UD_CONST);
             return 1;
         }
 
@@ -3906,6 +3923,7 @@
         static int set_A(lua_State* L) {
             CheckSelf(FGuid);
             auto& A = self->A;
+            CheckIfConst(FGuid)
             auto AIn = LuaObject::checkValue<uint32>(L, 2);
             A = AIn;
             LuaObject::push(L, AIn);
@@ -3923,6 +3941,7 @@
         static int set_B(lua_State* L) {
             CheckSelf(FGuid);
             auto& B = self->B;
+            CheckIfConst(FGuid)
             auto BIn = LuaObject::checkValue<uint32>(L, 2);
             B = BIn;
             LuaObject::push(L, BIn);
@@ -3940,6 +3959,7 @@
         static int set_C(lua_State* L) {
             CheckSelf(FGuid);
             auto& C = self->C;
+            CheckIfConst(FGuid)
             auto CIn = LuaObject::checkValue<uint32>(L, 2);
             C = CIn;
             LuaObject::push(L, CIn);
@@ -3957,6 +3977,7 @@
         static int set_D(lua_State* L) {
             CheckSelf(FGuid);
             auto& D = self->D;
+            CheckIfConst(FGuid)
             auto DIn = LuaObject::checkValue<uint32>(L, 2);
             D = DIn;
             LuaObject::push(L, DIn);
@@ -4168,6 +4189,7 @@
         static int set_InVal(lua_State* L) {
             CheckSelf(FInterpCurvePointFloat);
             auto& InVal = self->InVal;
+            CheckIfConst(FInterpCurvePointFloat)
             auto InValIn = LuaObject::checkValue<float>(L, 2);
             InVal = InValIn;
             LuaObject::push(L, InValIn);
@@ -4185,6 +4207,7 @@
         static int set_OutVal(lua_State* L) {
             CheckSelf(FInterpCurvePointFloat);
             auto& OutVal = self->OutVal;
+            CheckIfConst(FInterpCurvePointFloat)
             auto OutValIn = LuaObject::checkValue<float>(L, 2);
             OutVal = OutValIn;
             LuaObject::push(L, OutValIn);
@@ -4202,6 +4225,7 @@
         static int set_ArriveTangent(lua_State* L) {
             CheckSelf(FInterpCurvePointFloat);
             auto& ArriveTangent = self->ArriveTangent;
+            CheckIfConst(FInterpCurvePointFloat)
             auto ArriveTangentIn = LuaObject::checkValue<float>(L, 2);
             ArriveTangent = ArriveTangentIn;
             LuaObject::push(L, ArriveTangentIn);
@@ -4219,6 +4243,7 @@
         static int set_LeaveTangent(lua_State* L) {
             CheckSelf(FInterpCurvePointFloat);
             auto& LeaveTangent = self->LeaveTangent;
+            CheckIfConst(FInterpCurvePointFloat)
             auto LeaveTangentIn = LuaObject::checkValue<float>(L, 2);
             LeaveTangent = LeaveTangentIn;
             LuaObject::push(L, LeaveTangentIn);
@@ -4315,6 +4340,7 @@
         static int set_InVal(lua_State* L) {
             CheckSelf(FInterpCurvePointVector2D);
             auto& InVal = self->InVal;
+            CheckIfConst(FInterpCurvePointVector2D)
             auto InValIn = LuaObject::checkValue<float>(L, 2);
             InVal = InValIn;
             LuaObject::push(L, InValIn);
@@ -4325,14 +4351,17 @@
         static int get_OutVal(lua_State* L) {
             CheckSelf(FInterpCurvePointVector2D);
             auto& OutVal = self->OutVal;
+            uint32 flag = UD_VALUETYPE;
+            flag |= udptr->flag & UD_CONST;
             SLUA_GET_NETINFO
-            LuaObject::pushAndLink<FVector2D>(L, udptr->parent ? udptr->parent : self, "FVector2D", &OutVal, (void*)proxy, luaReplicatedIndex);
+            LuaObject::pushAndLink<FVector2D>(L, udptr->parent ? udptr->parent : self, "FVector2D", &OutVal, (void*)proxy, luaReplicatedIndex, flag);
             return 1;
         }
 
         static int set_OutVal(lua_State* L) {
             CheckSelf(FInterpCurvePointVector2D);
             auto& OutVal = self->OutVal;
+            CheckIfConst(FInterpCurvePointVector2D)
             auto OutValIn = LuaObject::checkValue<FVector2D*>(L, 2);
             OutVal = *OutValIn;
             LuaObject::push<FVector2D>(L, "FVector2D", OutValIn);
@@ -4343,14 +4372,17 @@
         static int get_ArriveTangent(lua_State* L) {
             CheckSelf(FInterpCurvePointVector2D);
             auto& ArriveTangent = self->ArriveTangent;
+            uint32 flag = UD_VALUETYPE;
+            flag |= udptr->flag & UD_CONST;
             SLUA_GET_NETINFO
-            LuaObject::pushAndLink<FVector2D>(L, udptr->parent ? udptr->parent : self, "FVector2D", &ArriveTangent, (void*)proxy, luaReplicatedIndex);
+            LuaObject::pushAndLink<FVector2D>(L, udptr->parent ? udptr->parent : self, "FVector2D", &ArriveTangent, (void*)proxy, luaReplicatedIndex, flag);
             return 1;
         }
 
         static int set_ArriveTangent(lua_State* L) {
             CheckSelf(FInterpCurvePointVector2D);
             auto& ArriveTangent = self->ArriveTangent;
+            CheckIfConst(FInterpCurvePointVector2D)
             auto ArriveTangentIn = LuaObject::checkValue<FVector2D*>(L, 2);
             ArriveTangent = *ArriveTangentIn;
             LuaObject::push<FVector2D>(L, "FVector2D", ArriveTangentIn);
@@ -4361,14 +4393,17 @@
         static int get_LeaveTangent(lua_State* L) {
             CheckSelf(FInterpCurvePointVector2D);
             auto& LeaveTangent = self->LeaveTangent;
+            uint32 flag = UD_VALUETYPE;
+            flag |= udptr->flag & UD_CONST;
             SLUA_GET_NETINFO
-            LuaObject::pushAndLink<FVector2D>(L, udptr->parent ? udptr->parent : self, "FVector2D", &LeaveTangent, (void*)proxy, luaReplicatedIndex);
+            LuaObject::pushAndLink<FVector2D>(L, udptr->parent ? udptr->parent : self, "FVector2D", &LeaveTangent, (void*)proxy, luaReplicatedIndex, flag);
             return 1;
         }
 
         static int set_LeaveTangent(lua_State* L) {
             CheckSelf(FInterpCurvePointVector2D);
             auto& LeaveTangent = self->LeaveTangent;
+            CheckIfConst(FInterpCurvePointVector2D)
             auto LeaveTangentIn = LuaObject::checkValue<FVector2D*>(L, 2);
             LeaveTangent = *LeaveTangentIn;
             LuaObject::push<FVector2D>(L, "FVector2D", LeaveTangentIn);
@@ -4465,6 +4500,7 @@
         static int set_InVal(lua_State* L) {
             CheckSelf(FInterpCurvePointVector);
             auto& InVal = self->InVal;
+            CheckIfConst(FInterpCurvePointVector)
             auto InValIn = LuaObject::checkValue<float>(L, 2);
             InVal = InValIn;
             LuaObject::push(L, InValIn);
@@ -4475,14 +4511,17 @@
         static int get_OutVal(lua_State* L) {
             CheckSelf(FInterpCurvePointVector);
             auto& OutVal = self->OutVal;
+            uint32 flag = UD_VALUETYPE;
+            flag |= udptr->flag & UD_CONST;
             SLUA_GET_NETINFO
-            LuaObject::pushAndLink<FVector>(L, udptr->parent ? udptr->parent : self, "FVector", &OutVal, (void*)proxy, luaReplicatedIndex);
+            LuaObject::pushAndLink<FVector>(L, udptr->parent ? udptr->parent : self, "FVector", &OutVal, (void*)proxy, luaReplicatedIndex, flag);
             return 1;
         }
 
         static int set_OutVal(lua_State* L) {
             CheckSelf(FInterpCurvePointVector);
             auto& OutVal = self->OutVal;
+            CheckIfConst(FInterpCurvePointVector)
             auto OutValIn = LuaObject::checkValue<FVector*>(L, 2);
             OutVal = *OutValIn;
             LuaObject::push<FVector>(L, "FVector", OutValIn);
@@ -4493,14 +4532,17 @@
         static int get_ArriveTangent(lua_State* L) {
             CheckSelf(FInterpCurvePointVector);
             auto& ArriveTangent = self->ArriveTangent;
+            uint32 flag = UD_VALUETYPE;
+            flag |= udptr->flag & UD_CONST;
             SLUA_GET_NETINFO
-            LuaObject::pushAndLink<FVector>(L, udptr->parent ? udptr->parent : self, "FVector", &ArriveTangent, (void*)proxy, luaReplicatedIndex);
+            LuaObject::pushAndLink<FVector>(L, udptr->parent ? udptr->parent : self, "FVector", &ArriveTangent, (void*)proxy, luaReplicatedIndex, flag);
             return 1;
         }
 
         static int set_ArriveTangent(lua_State* L) {
             CheckSelf(FInterpCurvePointVector);
             auto& ArriveTangent = self->ArriveTangent;
+            CheckIfConst(FInterpCurvePointVector)
             auto ArriveTangentIn = LuaObject::checkValue<FVector*>(L, 2);
             ArriveTangent = *ArriveTangentIn;
             LuaObject::push<FVector>(L, "FVector", ArriveTangentIn);
@@ -4511,14 +4553,17 @@
         static int get_LeaveTangent(lua_State* L) {
             CheckSelf(FInterpCurvePointVector);
             auto& LeaveTangent = self->LeaveTangent;
+            uint32 flag = UD_VALUETYPE;
+            flag |= udptr->flag & UD_CONST;
             SLUA_GET_NETINFO
-            LuaObject::pushAndLink<FVector>(L, udptr->parent ? udptr->parent : self, "FVector", &LeaveTangent, (void*)proxy, luaReplicatedIndex);
+            LuaObject::pushAndLink<FVector>(L, udptr->parent ? udptr->parent : self, "FVector", &LeaveTangent, (void*)proxy, luaReplicatedIndex, flag);
             return 1;
         }
 
         static int set_LeaveTangent(lua_State* L) {
             CheckSelf(FInterpCurvePointVector);
             auto& LeaveTangent = self->LeaveTangent;
+            CheckIfConst(FInterpCurvePointVector)
             auto LeaveTangentIn = LuaObject::checkValue<FVector*>(L, 2);
             LeaveTangent = *LeaveTangentIn;
             LuaObject::push<FVector>(L, "FVector", LeaveTangentIn);
@@ -4615,6 +4660,7 @@
         static int set_InVal(lua_State* L) {
             CheckSelf(FInterpCurvePointQuat);
             auto& InVal = self->InVal;
+            CheckIfConst(FInterpCurvePointQuat)
             auto InValIn = LuaObject::checkValue<float>(L, 2);
             InVal = InValIn;
             LuaObject::push(L, InValIn);
@@ -4625,14 +4671,17 @@
         static int get_OutVal(lua_State* L) {
             CheckSelf(FInterpCurvePointQuat);
             auto& OutVal = self->OutVal;
+            uint32 flag = UD_VALUETYPE;
+            flag |= udptr->flag & UD_CONST;
             SLUA_GET_NETINFO
-            LuaObject::pushAndLink<FQuat>(L, udptr->parent ? udptr->parent : self, "FQuat", &OutVal, (void*)proxy, luaReplicatedIndex);
+            LuaObject::pushAndLink<FQuat>(L, udptr->parent ? udptr->parent : self, "FQuat", &OutVal, (void*)proxy, luaReplicatedIndex, flag);
             return 1;
         }
 
         static int set_OutVal(lua_State* L) {
             CheckSelf(FInterpCurvePointQuat);
             auto& OutVal = self->OutVal;
+            CheckIfConst(FInterpCurvePointQuat)
             auto OutValIn = LuaObject::checkValue<FQuat*>(L, 2);
             OutVal = *OutValIn;
             LuaObject::push<FQuat>(L, "FQuat", OutValIn);
@@ -4643,14 +4692,17 @@
         static int get_ArriveTangent(lua_State* L) {
             CheckSelf(FInterpCurvePointQuat);
             auto& ArriveTangent = self->ArriveTangent;
+            uint32 flag = UD_VALUETYPE;
+            flag |= udptr->flag & UD_CONST;
             SLUA_GET_NETINFO
-            LuaObject::pushAndLink<FQuat>(L, udptr->parent ? udptr->parent : self, "FQuat", &ArriveTangent, (void*)proxy, luaReplicatedIndex);
+            LuaObject::pushAndLink<FQuat>(L, udptr->parent ? udptr->parent : self, "FQuat", &ArriveTangent, (void*)proxy, luaReplicatedIndex, flag);
             return 1;
         }
 
         static int set_ArriveTangent(lua_State* L) {
             CheckSelf(FInterpCurvePointQuat);
             auto& ArriveTangent = self->ArriveTangent;
+            CheckIfConst(FInterpCurvePointQuat)
             auto ArriveTangentIn = LuaObject::checkValue<FQuat*>(L, 2);
             ArriveTangent = *ArriveTangentIn;
             LuaObject::push<FQuat>(L, "FQuat", ArriveTangentIn);
@@ -4661,14 +4713,17 @@
         static int get_LeaveTangent(lua_State* L) {
             CheckSelf(FInterpCurvePointQuat);
             auto& LeaveTangent = self->LeaveTangent;
+            uint32 flag = UD_VALUETYPE;
+            flag |= udptr->flag & UD_CONST;
             SLUA_GET_NETINFO
-            LuaObject::pushAndLink<FQuat>(L, udptr->parent ? udptr->parent : self, "FQuat", &LeaveTangent, (void*)proxy, luaReplicatedIndex);
+            LuaObject::pushAndLink<FQuat>(L, udptr->parent ? udptr->parent : self, "FQuat", &LeaveTangent, (void*)proxy, luaReplicatedIndex, flag);
             return 1;
         }
 
         static int set_LeaveTangent(lua_State* L) {
             CheckSelf(FInterpCurvePointQuat);
             auto& LeaveTangent = self->LeaveTangent;
+            CheckIfConst(FInterpCurvePointQuat)
             auto LeaveTangentIn = LuaObject::checkValue<FQuat*>(L, 2);
             LeaveTangent = *LeaveTangentIn;
             LuaObject::push<FQuat>(L, "FQuat", LeaveTangentIn);
@@ -4743,6 +4798,7 @@
         static int set_InVal(lua_State* L) {
             CheckSelf(FInterpCurvePointTwoVectors);
             auto& InVal = self->InVal;
+            CheckIfConst(FInterpCurvePointTwoVectors)
             auto InValIn = LuaObject::checkValue<float>(L, 2);
             InVal = InValIn;
             LuaObject::push(L, InValIn);
@@ -4836,6 +4892,7 @@
         static int set_InVal(lua_State* L) {
             CheckSelf(FInterpCurvePointLinearColor);
             auto& InVal = self->InVal;
+            CheckIfConst(FInterpCurvePointLinearColor)
             auto InValIn = LuaObject::checkValue<float>(L, 2);
             InVal = InValIn;
             LuaObject::push(L, InValIn);
@@ -4846,14 +4903,17 @@
         static int get_OutVal(lua_State* L) {
             CheckSelf(FInterpCurvePointLinearColor);
             auto& OutVal = self->OutVal;
+            uint32 flag = UD_VALUETYPE;
+            flag |= udptr->flag & UD_CONST;
             SLUA_GET_NETINFO
-            LuaObject::pushAndLink<FLinearColor>(L, udptr->parent ? udptr->parent : self, "FLinearColor", &OutVal, (void*)proxy, luaReplicatedIndex);
+            LuaObject::pushAndLink<FLinearColor>(L, udptr->parent ? udptr->parent : self, "FLinearColor", &OutVal, (void*)proxy, luaReplicatedIndex, flag);
             return 1;
         }
 
         static int set_OutVal(lua_State* L) {
             CheckSelf(FInterpCurvePointLinearColor);
             auto& OutVal = self->OutVal;
+            CheckIfConst(FInterpCurvePointLinearColor)
             auto OutValIn = LuaObject::checkValue<FLinearColor*>(L, 2);
             OutVal = *OutValIn;
             LuaObject::push<FLinearColor>(L, "FLinearColor", OutValIn);
@@ -4864,14 +4924,17 @@
         static int get_ArriveTangent(lua_State* L) {
             CheckSelf(FInterpCurvePointLinearColor);
             auto& ArriveTangent = self->ArriveTangent;
+            uint32 flag = UD_VALUETYPE;
+            flag |= udptr->flag & UD_CONST;
             SLUA_GET_NETINFO
-            LuaObject::pushAndLink<FLinearColor>(L, udptr->parent ? udptr->parent : self, "FLinearColor", &ArriveTangent, (void*)proxy, luaReplicatedIndex);
+            LuaObject::pushAndLink<FLinearColor>(L, udptr->parent ? udptr->parent : self, "FLinearColor", &ArriveTangent, (void*)proxy, luaReplicatedIndex, flag);
             return 1;
         }
 
         static int set_ArriveTangent(lua_State* L) {
             CheckSelf(FInterpCurvePointLinearColor);
             auto& ArriveTangent = self->ArriveTangent;
+            CheckIfConst(FInterpCurvePointLinearColor)
             auto ArriveTangentIn = LuaObject::checkValue<FLinearColor*>(L, 2);
             ArriveTangent = *ArriveTangentIn;
             LuaObject::push<FLinearColor>(L, "FLinearColor", ArriveTangentIn);
@@ -4882,14 +4945,17 @@
         static int get_LeaveTangent(lua_State* L) {
             CheckSelf(FInterpCurvePointLinearColor);
             auto& LeaveTangent = self->LeaveTangent;
+            uint32 flag = UD_VALUETYPE;
+            flag |= udptr->flag & UD_CONST;
             SLUA_GET_NETINFO
-            LuaObject::pushAndLink<FLinearColor>(L, udptr->parent ? udptr->parent : self, "FLinearColor", &LeaveTangent, (void*)proxy, luaReplicatedIndex);
+            LuaObject::pushAndLink<FLinearColor>(L, udptr->parent ? udptr->parent : self, "FLinearColor", &LeaveTangent, (void*)proxy, luaReplicatedIndex, flag);
             return 1;
         }
 
         static int set_LeaveTangent(lua_State* L) {
             CheckSelf(FInterpCurvePointLinearColor);
             auto& LeaveTangent = self->LeaveTangent;
+            CheckIfConst(FInterpCurvePointLinearColor)
             auto LeaveTangentIn = LuaObject::checkValue<FLinearColor*>(L, 2);
             LeaveTangent = *LeaveTangentIn;
             LuaObject::push<FLinearColor>(L, "FLinearColor", LeaveTangentIn);
@@ -6181,6 +6247,7 @@
         static int set_Value(lua_State* L) {
             CheckSelf(FFrameNumber);
             auto& Value = self->Value;
+            CheckIfConst(FFrameNumber)
             auto ValueIn = LuaObject::checkValue<int32>(L, 2);
             Value = ValueIn;
             LuaObject::push(L, ValueIn);
@@ -6243,14 +6310,17 @@
         static int get_FrameNumber(lua_State* L) {
             CheckSelf(FFrameTime);
             auto& FrameNumber = self->FrameNumber;
+            uint32 flag = UD_VALUETYPE;
+            flag |= udptr->flag & UD_CONST;
             SLUA_GET_NETINFO
-            LuaObject::pushAndLink<FFrameNumber>(L, udptr->parent ? udptr->parent : self, "FFrameNumber", &FrameNumber, (void*)proxy, luaReplicatedIndex);
+            LuaObject::pushAndLink<FFrameNumber>(L, udptr->parent ? udptr->parent : self, "FFrameNumber", &FrameNumber, (void*)proxy, luaReplicatedIndex, flag);
             return 1;
         }
 
         static int set_FrameNumber(lua_State* L) {
             CheckSelf(FFrameTime);
             auto& FrameNumber = self->FrameNumber;
+            CheckIfConst(FFrameTime)
             auto FrameNumberIn = LuaObject::checkValue<FFrameNumber*>(L, 2);
             FrameNumber = *FrameNumberIn;
             LuaObject::push<FFrameNumber>(L, "FFrameNumber", FrameNumberIn);
@@ -6912,14 +6982,17 @@
         static int get_PrimaryAssetType(lua_State* L) {
             CheckSelf(FPrimaryAssetId);
             auto& PrimaryAssetType = self->PrimaryAssetType;
+            uint32 flag = UD_VALUETYPE;
+            flag |= udptr->flag & UD_CONST;
             SLUA_GET_NETINFO
-            LuaObject::pushAndLink<FPrimaryAssetType>(L, udptr->parent ? udptr->parent : self, "FPrimaryAssetType", &PrimaryAssetType, (void*)proxy, luaReplicatedIndex);
+            LuaObject::pushAndLink<FPrimaryAssetType>(L, udptr->parent ? udptr->parent : self, "FPrimaryAssetType", &PrimaryAssetType, (void*)proxy, luaReplicatedIndex, flag);
             return 1;
         }
 
         static int set_PrimaryAssetType(lua_State* L) {
             CheckSelf(FPrimaryAssetId);
             auto& PrimaryAssetType = self->PrimaryAssetType;
+            CheckIfConst(FPrimaryAssetId)
             auto PrimaryAssetTypeIn = LuaObject::checkValue<FPrimaryAssetType*>(L, 2);
             PrimaryAssetType = *PrimaryAssetTypeIn;
             LuaObject::push<FPrimaryAssetType>(L, "FPrimaryAssetType", PrimaryAssetTypeIn);
@@ -7982,6 +8055,7 @@
         static int set_X(lua_State* L) {
             CheckSelf(FVector2D);
             auto& X = self->X;
+            CheckIfConst(FVector2D)
             auto XIn = LuaObject::checkValue<double>(L, 2);
             X = XIn;
             LuaObject::push(L, XIn);
@@ -7999,6 +8073,7 @@
         static int set_Y(lua_State* L) {
             CheckSelf(FVector2D);
             auto& Y = self->Y;
+            CheckIfConst(FVector2D)
             auto YIn = LuaObject::checkValue<double>(L, 2);
             Y = YIn;
             LuaObject::push(L, YIn);
@@ -8008,19 +8083,19 @@
 
         static int get_ZeroVector(lua_State* L) {
             auto& ZeroVector = FVector2D::ZeroVector;
-            LuaObject::push<FVector2D>(L, "FVector2D", &ZeroVector);
+            LuaObject::push<FVector2D>(L, "FVector2D", &ZeroVector, UD_VALUETYPE | UD_CONST);
             return 1;
         }
 
         static int get_UnitVector(lua_State* L) {
             auto& UnitVector = FVector2D::UnitVector;
-            LuaObject::push<FVector2D>(L, "FVector2D", &UnitVector);
+            LuaObject::push<FVector2D>(L, "FVector2D", &UnitVector, UD_VALUETYPE | UD_CONST);
             return 1;
         }
 
         static int get_Unit45Deg(lua_State* L) {
             auto& Unit45Deg = FVector2D::Unit45Deg;
-            LuaObject::push<FVector2D>(L, "FVector2D", &Unit45Deg);
+            LuaObject::push<FVector2D>(L, "FVector2D", &Unit45Deg, UD_VALUETYPE | UD_CONST);
             return 1;
         }
 
@@ -8733,6 +8808,7 @@
         static int set_X(lua_State* L) {
             CheckSelf(FVector);
             auto& X = self->X;
+            CheckIfConst(FVector)
             auto XIn = LuaObject::checkValue<double>(L, 2);
             X = XIn;
             LuaObject::push(L, XIn);
@@ -8750,6 +8826,7 @@
         static int set_Y(lua_State* L) {
             CheckSelf(FVector);
             auto& Y = self->Y;
+            CheckIfConst(FVector)
             auto YIn = LuaObject::checkValue<double>(L, 2);
             Y = YIn;
             LuaObject::push(L, YIn);
@@ -8767,6 +8844,7 @@
         static int set_Z(lua_State* L) {
             CheckSelf(FVector);
             auto& Z = self->Z;
+            CheckIfConst(FVector)
             auto ZIn = LuaObject::checkValue<double>(L, 2);
             Z = ZIn;
             LuaObject::push(L, ZIn);
@@ -8776,67 +8854,67 @@
 
         static int get_ZeroVector(lua_State* L) {
             auto& ZeroVector = FVector::ZeroVector;
-            LuaObject::push<FVector>(L, "FVector", &ZeroVector);
+            LuaObject::push<FVector>(L, "FVector", &ZeroVector, UD_VALUETYPE | UD_CONST);
             return 1;
         }
 
         static int get_OneVector(lua_State* L) {
             auto& OneVector = FVector::OneVector;
-            LuaObject::push<FVector>(L, "FVector", &OneVector);
+            LuaObject::push<FVector>(L, "FVector", &OneVector, UD_VALUETYPE | UD_CONST);
             return 1;
         }
 
         static int get_UpVector(lua_State* L) {
             auto& UpVector = FVector::UpVector;
-            LuaObject::push<FVector>(L, "FVector", &UpVector);
+            LuaObject::push<FVector>(L, "FVector", &UpVector, UD_VALUETYPE | UD_CONST);
             return 1;
         }
 
         static int get_DownVector(lua_State* L) {
             auto& DownVector = FVector::DownVector;
-            LuaObject::push<FVector>(L, "FVector", &DownVector);
+            LuaObject::push<FVector>(L, "FVector", &DownVector, UD_VALUETYPE | UD_CONST);
             return 1;
         }
 
         static int get_ForwardVector(lua_State* L) {
             auto& ForwardVector = FVector::ForwardVector;
-            LuaObject::push<FVector>(L, "FVector", &ForwardVector);
+            LuaObject::push<FVector>(L, "FVector", &ForwardVector, UD_VALUETYPE | UD_CONST);
             return 1;
         }
 
         static int get_BackwardVector(lua_State* L) {
             auto& BackwardVector = FVector::BackwardVector;
-            LuaObject::push<FVector>(L, "FVector", &BackwardVector);
+            LuaObject::push<FVector>(L, "FVector", &BackwardVector, UD_VALUETYPE | UD_CONST);
             return 1;
         }
 
         static int get_RightVector(lua_State* L) {
             auto& RightVector = FVector::RightVector;
-            LuaObject::push<FVector>(L, "FVector", &RightVector);
+            LuaObject::push<FVector>(L, "FVector", &RightVector, UD_VALUETYPE | UD_CONST);
             return 1;
         }
 
         static int get_LeftVector(lua_State* L) {
             auto& LeftVector = FVector::LeftVector;
-            LuaObject::push<FVector>(L, "FVector", &LeftVector);
+            LuaObject::push<FVector>(L, "FVector", &LeftVector, UD_VALUETYPE | UD_CONST);
             return 1;
         }
 
         static int get_XAxisVector(lua_State* L) {
             auto& XAxisVector = FVector::XAxisVector;
-            LuaObject::push<FVector>(L, "FVector", &XAxisVector);
+            LuaObject::push<FVector>(L, "FVector", &XAxisVector, UD_VALUETYPE | UD_CONST);
             return 1;
         }
 
         static int get_YAxisVector(lua_State* L) {
             auto& YAxisVector = FVector::YAxisVector;
-            LuaObject::push<FVector>(L, "FVector", &YAxisVector);
+            LuaObject::push<FVector>(L, "FVector", &YAxisVector, UD_VALUETYPE | UD_CONST);
             return 1;
         }
 
         static int get_ZAxisVector(lua_State* L) {
             auto& ZAxisVector = FVector::ZAxisVector;
-            LuaObject::push<FVector>(L, "FVector", &ZAxisVector);
+            LuaObject::push<FVector>(L, "FVector", &ZAxisVector, UD_VALUETYPE | UD_CONST);
             return 1;
         }
 
@@ -10557,6 +10635,7 @@
         static int set_X(lua_State* L) {
             CheckSelf(FVector4);
             auto& X = self->X;
+            CheckIfConst(FVector4)
             auto XIn = LuaObject::checkValue<double>(L, 2);
             X = XIn;
             LuaObject::push(L, XIn);
@@ -10574,6 +10653,7 @@
         static int set_Y(lua_State* L) {
             CheckSelf(FVector4);
             auto& Y = self->Y;
+            CheckIfConst(FVector4)
             auto YIn = LuaObject::checkValue<double>(L, 2);
             Y = YIn;
             LuaObject::push(L, YIn);
@@ -10591,6 +10671,7 @@
         static int set_Z(lua_State* L) {
             CheckSelf(FVector4);
             auto& Z = self->Z;
+            CheckIfConst(FVector4)
             auto ZIn = LuaObject::checkValue<double>(L, 2);
             Z = ZIn;
             LuaObject::push(L, ZIn);
@@ -10608,6 +10689,7 @@
         static int set_W(lua_State* L) {
             CheckSelf(FVector4);
             auto& W = self->W;
+            CheckIfConst(FVector4)
             auto WIn = LuaObject::checkValue<double>(L, 2);
             W = WIn;
             LuaObject::push(L, WIn);
@@ -11145,6 +11227,7 @@
         static int set_W(lua_State* L) {
             CheckSelf(FPlane);
             auto& W = self->W;
+            CheckIfConst(FPlane)
             auto WIn = LuaObject::checkValue<double>(L, 2);
             W = WIn;
             LuaObject::push(L, WIn);
@@ -11564,6 +11647,7 @@
         static int set_X(lua_State* L) {
             CheckSelf(FQuat);
             auto& X = self->X;
+            CheckIfConst(FQuat)
             auto XIn = LuaObject::checkValue<double>(L, 2);
             X = XIn;
             LuaObject::push(L, XIn);
@@ -11581,6 +11665,7 @@
         static int set_Y(lua_State* L) {
             CheckSelf(FQuat);
             auto& Y = self->Y;
+            CheckIfConst(FQuat)
             auto YIn = LuaObject::checkValue<double>(L, 2);
             Y = YIn;
             LuaObject::push(L, YIn);
@@ -11598,6 +11683,7 @@
         static int set_Z(lua_State* L) {
             CheckSelf(FQuat);
             auto& Z = self->Z;
+            CheckIfConst(FQuat)
             auto ZIn = LuaObject::checkValue<double>(L, 2);
             Z = ZIn;
             LuaObject::push(L, ZIn);
@@ -11615,6 +11701,7 @@
         static int set_W(lua_State* L) {
             CheckSelf(FQuat);
             auto& W = self->W;
+            CheckIfConst(FQuat)
             auto WIn = LuaObject::checkValue<double>(L, 2);
             W = WIn;
             LuaObject::push(L, WIn);
@@ -11624,7 +11711,7 @@
 
         static int get_Identity(lua_State* L) {
             auto& Identity = FQuat::Identity;
-            LuaObject::push<FQuat>(L, "FQuat", &Identity);
+            LuaObject::push<FQuat>(L, "FQuat", &Identity, UD_VALUETYPE | UD_CONST);
             return 1;
         }
 
@@ -12782,6 +12869,7 @@
         static int set_Pitch(lua_State* L) {
             CheckSelf(FRotator);
             auto& Pitch = self->Pitch;
+            CheckIfConst(FRotator)
             auto PitchIn = LuaObject::checkValue<double>(L, 2);
             Pitch = PitchIn;
             LuaObject::push(L, PitchIn);
@@ -12799,6 +12887,7 @@
         static int set_Yaw(lua_State* L) {
             CheckSelf(FRotator);
             auto& Yaw = self->Yaw;
+            CheckIfConst(FRotator)
             auto YawIn = LuaObject::checkValue<double>(L, 2);
             Yaw = YawIn;
             LuaObject::push(L, YawIn);
@@ -12816,6 +12905,7 @@
         static int set_Roll(lua_State* L) {
             CheckSelf(FRotator);
             auto& Roll = self->Roll;
+            CheckIfConst(FRotator)
             auto RollIn = LuaObject::checkValue<double>(L, 2);
             Roll = RollIn;
             LuaObject::push(L, RollIn);
@@ -12825,7 +12915,7 @@
 
         static int get_ZeroRotator(lua_State* L) {
             auto& ZeroRotator = FRotator::ZeroRotator;
-            LuaObject::push<FRotator>(L, "FRotator", &ZeroRotator);
+            LuaObject::push<FRotator>(L, "FRotator", &ZeroRotator, UD_VALUETYPE | UD_CONST);
             return 1;
         }
 
@@ -13460,7 +13550,7 @@
 
         static int get_Identity(lua_State* L) {
             auto& Identity = FTransform::Identity;
-            LuaObject::push<FTransform>(L, "FTransform", &Identity);
+            LuaObject::push<FTransform>(L, "FTransform", &Identity, UD_VALUETYPE | UD_CONST);
             return 1;
         }
 
@@ -14979,7 +15069,7 @@
 
         static int get_Identity(lua_State* L) {
             auto& Identity = FMatrix::Identity;
-            LuaObject::push<FMatrix>(L, "FMatrix", &Identity);
+            LuaObject::push<FMatrix>(L, "FMatrix", &Identity, UD_VALUETYPE | UD_CONST);
             return 1;
         }
 
@@ -15888,14 +15978,17 @@
         static int get_Min(lua_State* L) {
             CheckSelf(FBox2D);
             auto& Min = self->Min;
+            uint32 flag = UD_VALUETYPE;
+            flag |= udptr->flag & UD_CONST;
             SLUA_GET_NETINFO
-            LuaObject::pushAndLink<FVector2D>(L, udptr->parent ? udptr->parent : self, "FVector2D", &Min, (void*)proxy, luaReplicatedIndex);
+            LuaObject::pushAndLink<FVector2D>(L, udptr->parent ? udptr->parent : self, "FVector2D", &Min, (void*)proxy, luaReplicatedIndex, flag);
             return 1;
         }
 
         static int set_Min(lua_State* L) {
             CheckSelf(FBox2D);
             auto& Min = self->Min;
+            CheckIfConst(FBox2D)
             auto MinIn = LuaObject::checkValue<FVector2D*>(L, 2);
             Min = *MinIn;
             LuaObject::push<FVector2D>(L, "FVector2D", MinIn);
@@ -15906,14 +15999,17 @@
         static int get_Max(lua_State* L) {
             CheckSelf(FBox2D);
             auto& Max = self->Max;
+            uint32 flag = UD_VALUETYPE;
+            flag |= udptr->flag & UD_CONST;
             SLUA_GET_NETINFO
-            LuaObject::pushAndLink<FVector2D>(L, udptr->parent ? udptr->parent : self, "FVector2D", &Max, (void*)proxy, luaReplicatedIndex);
+            LuaObject::pushAndLink<FVector2D>(L, udptr->parent ? udptr->parent : self, "FVector2D", &Max, (void*)proxy, luaReplicatedIndex, flag);
             return 1;
         }
 
         static int set_Max(lua_State* L) {
             CheckSelf(FBox2D);
             auto& Max = self->Max;
+            CheckIfConst(FBox2D)
             auto MaxIn = LuaObject::checkValue<FVector2D*>(L, 2);
             Max = *MaxIn;
             LuaObject::push<FVector2D>(L, "FVector2D", MaxIn);
@@ -15931,6 +16027,7 @@
         static int set_bIsValid(lua_State* L) {
             CheckSelf(FBox2D);
             auto& bIsValid = self->bIsValid;
+            CheckIfConst(FBox2D)
             auto bIsValidIn = LuaObject::checkValue<bool>(L, 2);
             bIsValid = bIsValidIn;
             LuaObject::push(L, bIsValidIn);

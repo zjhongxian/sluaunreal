@@ -44,6 +44,8 @@ if (udptr->flag & UD_NETTYPE) \
     luaReplicatedIndex = udptr->luaReplicatedIndex; \
 }
 
+#define CheckIfConst(T) if (udptr->flag & UD_CONST) \
+    luaL_error(L, #T" checkValue error, can not assign to const value."); \
 
 namespace NS_SLUA {
     UScriptStruct* StaticGetBaseStructureInternal(const TCHAR* Name)
