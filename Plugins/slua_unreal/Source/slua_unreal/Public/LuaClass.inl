@@ -80,4 +80,10 @@ function Class(base, static, classImplement)
     )
     return class
 end
+
+local base = {}
+setmetatable(base, {__call = function () return {} end})
+
+CBase = Class(base, nil, nil)
+
 )code";
