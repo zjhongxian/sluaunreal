@@ -21,6 +21,54 @@
 static TMap<int64, TWeakObjectPtr<UObject>> DelegateHandleToObjectMap;
 static int64 DelegateHandle = 0;
 
+#if !UE_BUILD_SHIPPING
+static int32 bLuaDelegateTraceEnable = 0;
+static TMap<int64, FString> LuaDelegateTraceback;
+
+void toggleLuaDelegateTrace() {
+    bLuaDelegateTraceEnable = !bLuaDelegateTraceEnable;
+
+    if (bLuaDelegateTraceEnable) {
+        FPlatformMisc::MessageBoxExt(EAppMsgType::Ok, TEXT("LuaDelegate leak trace enable!"), TEXT("Info"));
+    }
+    else {
+        FPlatformMisc::MessageBoxExt(EAppMsgType::Ok, TEXT("LuaDelegate leak trace disable!"), TEXT("Info"));
+    }
+}
+
+void dumpLuaDelegateTrace()
+{
+    UE_LOG(Slua, Log, TEXT("LuaDelegate total count: %d."), LuaDelegateTraceback.Num());
+    for (auto &iter : LuaDelegateTraceback)
+    {
+        UE_LOG(Slua, Log, TEXT("LuaDelegate register stack: %s"), *iter.Value);
+    }
+}
+
+void clearLuaDelegateTrace()
+{
+    LuaDelegateTraceback.Empty();
+}
+
+static FAutoConsoleCommand CToggleLuaDelegateTrace(
+    TEXT("slua.ToggleLuaDelegateTrace"),
+    TEXT("Toggle LuaDelegate tracer!"),
+    FConsoleCommandDelegate::CreateStatic(toggleLuaDelegateTrace),
+    ECVF_Cheat);
+
+static FAutoConsoleCommand CDumpLuaDelegateTrace(
+    TEXT("slua.DumpLuaDelegateTrace"),
+    TEXT("Dump LuaDelegate tracer!"),
+    FConsoleCommandDelegate::CreateStatic(dumpLuaDelegateTrace),
+    ECVF_Cheat);
+
+static FAutoConsoleCommand CClearLuaDelegateTrace(
+    TEXT("slua.ClearLuaDelegateTrace"),
+    TEXT("Clear LuaDelegate tracer!"),
+    FConsoleCommandDelegate::CreateStatic(clearLuaDelegateTrace),
+    ECVF_Cheat);
+#endif
+
 ULuaDelegate::ULuaDelegate(const FObjectInitializer& ObjectInitializer)
     : Super(ObjectInitializer)
     ,luafunction(nullptr)
@@ -90,6 +138,17 @@ int ULuaDelegate::addLuaDelegate(NS_SLUA::lua_State* L, ULuaDelegate* obj)
     NS_SLUA::LuaObject::addRef(L,obj,nullptr,true);
 
     lua_pushinteger(L, DelegateHandle);
+
+#if !UE_BUILD_SHIPPING
+    if (bLuaDelegateTraceEnable)
+    {
+        luaL_traceback(L, L, nullptr, 0);
+        const char* stacktrace = lua_tostring(L, -1);
+
+        LuaDelegateTraceback.Add(DelegateHandle, FString(UTF8_TO_TCHAR(stacktrace)));
+        lua_pop(L, 1);
+    }
+#endif
     return 1;
 }
 
@@ -101,6 +160,13 @@ int ULuaDelegate::removeLuaDelegate(NS_SLUA::lua_State* L, ULuaDelegate* obj)
     NS_SLUA::LuaObject::removeRef(L,obj);
     obj->dispose();
 
+#if !UE_BUILD_SHIPPING
+    if (bLuaDelegateTraceEnable)
+    {
+        LuaDelegateTraceback.Remove(obj->handle);
+        lua_pop(L, 1);
+    }
+#endif
     return 0;
 }
 
