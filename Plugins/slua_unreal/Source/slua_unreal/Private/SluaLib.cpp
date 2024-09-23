@@ -436,9 +436,9 @@ namespace NS_SLUA {
         }
     }
 
-    static FAutoConsoleCommand CEnableRefTrace(
-        TEXT("slua.EnableRefTrace"),
-        TEXT("Enable [registry] tracer!"),
+    static FAutoConsoleCommand CToggleRefTrace(
+        TEXT("slua.ToggleRefTrace"),
+        TEXT("Toggle [registry] tracer!"),
         FConsoleCommandDelegate::CreateStatic(toggleRefTraceEnable),
         ECVF_Cheat);
 #endif
