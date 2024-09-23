@@ -39,9 +39,23 @@ void toggleLuaDelegateTrace() {
 void dumpLuaDelegateTrace()
 {
     UE_LOG(Slua, Log, TEXT("LuaDelegate total count: %d."), LuaDelegateTraceback.Num());
+    TMap<FString, int32> TracebackStatistics;
+    TArray<FString> TracebackList;
     for (auto &iter : LuaDelegateTraceback)
     {
-        UE_LOG(Slua, Log, TEXT("LuaDelegate register stack: %s"), *iter.Value);
+        int32 &Count = TracebackStatistics.FindOrAdd(iter.Value);
+        if (Count == 0)
+        {
+            TracebackList.Add(iter.Value);
+        }
+        Count++;
+    }
+
+    TracebackList.Sort();
+    for (auto &iter : TracebackList)
+    {
+        int32 count = TracebackStatistics.FindChecked(iter);
+        UE_LOG(Slua, Log, TEXT("LuaDelegate register count[%d] stack: %s"), count, *iter);
     }
 }
 
