@@ -15,7 +15,9 @@
 #include "LuaObject.h"
 #include "LuaNetSerialization.h"
 #include "UObject/Package.h"
+#if !((ENGINE_MINOR_VERSION<25) && (ENGINE_MAJOR_VERSION==4))
 #include "Misc/FrameTime.h"
+#endif
 
 #define SLUA_GCSTRUCT(typeName) auto flag = udptr->flag; \
     if (udptr->parent) { \
