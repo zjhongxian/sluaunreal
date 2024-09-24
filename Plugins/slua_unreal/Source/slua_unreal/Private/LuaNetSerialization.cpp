@@ -612,6 +612,12 @@ bool FLuaNetSerialization::Write(FNetDeltaSerializeInfo& deltaParms, NS_SLUA::FL
                     for (LuaBitArray::FIterator It(changes); It; ++It)
                     {
                         int32 index = *It;
+                        if(index >= flatProperties.Num())
+                        {
+                            UE_LOG(Slua, Error, TEXT("FLuaNetSerialization::Write index[%d] out of range[%d] with Actor[%s]"), index, flatProperties.Num(), *actor->GetName());
+                            changes.Remove(index);
+                            continue;
+                        }
                         int32 propIndex = flatProperties[index].propIndex;
 
                         if (propIndex >= properties.Num() || !conditionMap[lifetimeConditions[propIndex]])
