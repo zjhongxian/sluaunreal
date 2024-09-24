@@ -483,4 +483,24 @@ namespace NS_SLUA {
         FConsoleCommandDelegate::CreateStatic(memUsed),
         ECVF_Cheat);
 #endif
+
+#if !UE_BUILD_SHIPPING
+    void dumpRefUObjects() {
+        auto state = LuaState::get();
+        if (!state) return;
+        auto& map = state->cacheSet();
+        for (auto& it : map) {
+            if (!it.Value || (it.Value->flag & UD_REFERENCE))
+            {
+                UE_LOG(Slua, Log, TEXT("Pushed Ref UObject %s"), *getUObjName(it.Key));
+            }
+        }
+    }
+    
+    static FAutoConsoleCommand CVarDumpRefUObjects(
+        TEXT("slua.DumpRefUObjects"),
+        TEXT("Dump all uobject that referenced by lua in main state"),
+        FConsoleCommandDelegate::CreateStatic(dumpRefUObjects),
+        ECVF_Cheat);
+#endif
 }
