@@ -485,22 +485,25 @@ namespace NS_SLUA {
 #endif
 
 #if !UE_BUILD_SHIPPING
-    void dumpRefUObjects() {
+    void dumpRefUObjects(FOutputDevice& OutputDevice) {
         auto state = LuaState::get();
         if (!state) return;
+
+        lua_gc(state->getLuaState(), LUA_GCCOLLECT, 0);
+
         auto& map = state->cacheSet();
         for (auto& it : map) {
             if (!it.Value || (it.Value->flag & UD_REFERENCE))
             {
-                UE_LOG(Slua, Log, TEXT("Pushed Ref UObject %s"), *getUObjName(it.Key));
+                OutputDevice.Logf(TEXT("Pushed Ref UObject %s"), *getUObjName(it.Key));
             }
         }
     }
     
-    static FAutoConsoleCommand CVarDumpRefUObjects(
+    static FAutoConsoleCommandWithOutputDevice CVarDumpRefUObjects(
         TEXT("slua.DumpRefUObjects"),
         TEXT("Dump all uobject that referenced by lua in main state"),
-        FConsoleCommandDelegate::CreateStatic(dumpRefUObjects),
+        FConsoleCommandWithOutputDeviceDelegate::CreateStatic(dumpRefUObjects),
         ECVF_Cheat);
 #endif
 }
