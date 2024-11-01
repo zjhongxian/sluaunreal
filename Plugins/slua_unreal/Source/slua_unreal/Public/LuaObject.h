@@ -231,7 +231,7 @@ namespace NS_SLUA {
         }
 
         template<typename T>
-        static T* maybeAnUDTable(lua_State* L, int p,bool checkfree) {
+        static T* maybeAnUDTable(lua_State* L, int p) {
             if(lua_istable(L, p)) {
                 AutoStack as(L);
                 // use lua_rawget instead of lua_getfield to avoid __index loop!
@@ -241,8 +241,7 @@ namespace NS_SLUA {
                     void* ud = lua_touserdata(L, -1);
                     return (T*)ud;
                 }
-                else if (lua_type(L, -1) == LUA_TUSERDATA)
-                    return checkUD<T>(L, lua_absindex(L, -1), checkfree);
+                check(lua_type(L, -1) != LUA_TUSERDATA);
             }
             return nullptr;
         }
@@ -270,10 +269,10 @@ namespace NS_SLUA {
                 }
             }
             else if (!t)
-                return maybeAnUDTable<T>(L, p,checkfree);
+                t = maybeAnUDTable<T>(L, p);
 
             // check UObject is valid
-            if (isUObjectValid(t)) return t;
+            if (isUObjectValid(t) || !checkfree) return t;
             return nullptr;
         }
 
@@ -284,11 +283,9 @@ namespace NS_SLUA {
             auto ptr = (UserData<UObject*>*)getUserdataFast(L, p, "UObject", isnil);
             if (isnil) { return nullptr; }
             CHECK_UD_VALID(ptr);
-            if (!ptr) {
-                return maybeAnUDTable<T>(L, p, checkfree);
-            }
-            if (isUObjectValid(ptr->ud) || !checkfree) {
-                return ptr->ud;
+            T* t = ptr ? ptr->ud : maybeAnUDTable<T>(L, p);
+            if (isUObjectValid(t) || !checkfree) {
+                return t;
             }
             return nullptr;
         }
@@ -338,7 +335,7 @@ namespace NS_SLUA {
                     return unboxSharedUDRef<T>(L,ptr);
                 }
             }
-            if (!ptr) return maybeAnUDTable<T>(L, p, checkfree);
+            if (!ptr) return maybeAnUDTable<T>(L, p);
             return ptr?ptr->ud:nullptr;
         }
 
