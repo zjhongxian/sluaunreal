@@ -271,9 +271,15 @@ namespace NS_SLUA {
             else if (!t)
                 t = maybeAnUDTable<T>(L, p);
 
-            // check UObject is valid
-            if (isUObjectValid(t) || !checkfree) return t;
-            return nullptr;
+            if (checkfree && t && !isUObjectValid(t)) {
+                if (!t->IsValidLowLevel())
+                    luaL_error(L, "expect valid UObject at %d, it's Destroyed!", p);
+                if (!IsValid(t))
+                    luaL_error(L, "expect valid UObject at %d, maybe it's PendingKill!", p);
+                if (!t->IsUnreachable())
+                    luaL_error(L, "expect valid UObject at %d, maybe it's Unreachable!", p);
+            }
+            return t;
         }
 
         // testudata, if T is uobject
@@ -283,11 +289,20 @@ namespace NS_SLUA {
             auto ptr = (UserData<UObject*>*)getUserdataFast(L, p, "UObject", isnil);
             if (isnil) { return nullptr; }
             CHECK_UD_VALID(ptr);
-            T* t = ptr ? ptr->ud : maybeAnUDTable<T>(L, p);
-            if (isUObjectValid(t) || !checkfree) {
-                return t;
+            T* t = ptr?ptr->ud:nullptr;
+            if (!t) {
+                t = maybeAnUDTable<T>(L, p);
             }
-            return nullptr;
+            
+            if (checkfree && t && !isUObjectValid(t)) {
+                if (!t->IsValidLowLevel())
+                    luaL_error(L, "expect valid UObject at %d, maybe it's Destroyed!", p);
+                if (!IsValid(t))
+                    luaL_error(L, "expect valid UObject at %d, maybe it's PendingKill!", p);
+                if (!t->IsUnreachable())
+                    luaL_error(L, "expect valid UObject at %d, it's Unreachable!", p);
+            }
+            return t;
         }
 
         template<class T>
@@ -374,8 +389,8 @@ namespace NS_SLUA {
         static void finishType(lua_State* L, const char* tn, lua_CFunction ctor, lua_CFunction gc, lua_CFunction strHint=nullptr);
 
         // check UObject is valid
-        static bool isUObjectValid(UObject* obj) {
-            return IsValid(obj) && !obj->IsUnreachable();
+        static inline bool isUObjectValid(UObject* obj) {
+            return obj && obj->IsValidLowLevel() && IsValid(obj) && !obj->IsUnreachable();
         }
 
         static inline bool isBinStringProperty(FProperty* inner)
