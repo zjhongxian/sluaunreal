@@ -239,6 +239,9 @@ namespace NS_SLUA {
             p = newProperty(owner, FByteProperty::StaticClass(), propName);
             p->SetPropertyFlags(CPF_HasGetValueTypeHash);
             break;
+        case EPropertyClass::Enum:
+            p = newProperty(owner, FEnumProperty::StaticClass(), propName);
+            p->SetPropertyFlags(CPF_HasGetValueTypeHash);
         case EPropertyClass::Int8:
             p = newProperty(owner, FInt8Property::StaticClass(), propName);
             p->SetPropertyFlags(CPF_HasGetValueTypeHash);
