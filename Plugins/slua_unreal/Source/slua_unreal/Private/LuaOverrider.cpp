@@ -602,34 +602,6 @@ namespace NS_SLUA
         {
             tryHook(obj, false);
         }
-
-        // Process UInputComponent
-        if (!obj->HasAnyFlags(RF_ClassDefaultObject | RF_ArchetypeObject) && obj->IsA(UInputComponent::StaticClass()))
-        {
-            auto inputComponent = Cast<UInputComponent>((UObject*)obj);
-            if (inputComponent)
-            {
-                AActor* actor = Cast<APlayerController>(Object->GetOuter());
-                if (!actor)
-                {
-                    actor = Cast<APawn>(Object->GetOuter());
-                }
-#if (ENGINE_MINOR_VERSION<25) && (ENGINE_MAJOR_VERSION==4)
-                if (actor && actor->Role >= ROLE_AutonomousProxy)
-#else
-                if (actor && actor->GetLocalRole() >= ROLE_AutonomousProxy)
-#endif
-                {
-                    inputComponents.AddUnique(inputComponent);
-
-                    if (onWorldTickStartHandle.IsValid())
-                    {
-                        FWorldDelegates::OnWorldTickStart.Remove(onWorldTickStartHandle);
-                    }
-                    onWorldTickStartHandle = FWorldDelegates::OnWorldTickStart.AddRaw(this, &LuaOverrider::onWorldTickStart);
-                }
-            }
-        }
     }
 
 #if !((ENGINE_MINOR_VERSION<23) && (ENGINE_MAJOR_VERSION==4))
@@ -1307,6 +1279,33 @@ namespace NS_SLUA
             luaInterface->PostLuaHook();
         }
 
+        // Process UInputComponent
+        if (obj->IsA(UInputComponent::StaticClass()))
+        {
+            auto inputComponent = Cast<UInputComponent>((UObject*)obj);
+            if (inputComponent)
+            {
+                AActor* actor = Cast<APlayerController>(obj->GetOuter());
+                if (!actor)
+                {
+                    actor = Cast<APawn>(obj->GetOuter());
+                }
+#if (ENGINE_MINOR_VERSION<25) && (ENGINE_MAJOR_VERSION==4)
+                if (actor && actor->Role >= ROLE_AutonomousProxy)
+#else
+                if (actor && actor->GetLocalRole() >= ROLE_AutonomousProxy)
+#endif
+                {
+                    inputComponents.AddUnique(inputComponent);
+
+                    if (onWorldTickStartHandle.IsValid())
+                    {
+                        FWorldDelegates::OnWorldTickStart.Remove(onWorldTickStartHandle);
+                    }
+                    onWorldTickStartHandle = FWorldDelegates::OnWorldTickStart.AddRaw(this, &LuaOverrider::onWorldTickStart);
+                }
+            }
+        }
         return true;
     }
 
