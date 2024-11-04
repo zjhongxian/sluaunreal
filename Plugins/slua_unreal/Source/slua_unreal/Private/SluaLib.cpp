@@ -443,48 +443,28 @@ namespace NS_SLUA {
         ECVF_Cheat);
 #endif
 
-#if WITH_EDITOR
-    void dumpUObjects() {
-        auto state = LuaState::get();
-        if (!state) return;
-        auto& map = state->cacheSet();
-        for (auto& it : map) {
-            UE_LOG(Slua, Log, TEXT("Pushed UObject %s"), *getUObjName(it.Key));
-        }
-    }
-
+#if !UE_BUILD_SHIPPING
     void garbageCollect() {
         auto state = LuaState::get();
         lua_gc(state->getLuaState(), LUA_GCCOLLECT, 0);
         UE_LOG(Slua, Log, TEXT("Performed full lua gc"));
     }
 
-    void memUsed() {
+    void dumpUObjects(FOutputDevice& OutputDevice) {
         auto state = LuaState::get();
-        int kb = lua_gc(state->getLuaState(), LUA_GCCOUNT, 0);
-        UE_LOG(Slua, Log, TEXT("Lua use memory %d kb"), kb);
+        if (!state) return;
+        auto& map = state->cacheSet();
+        for (auto& it : map) {
+            OutputDevice.Logf(TEXT("Pushed UObject %s"), *getUObjName(it.Key));
+        }
     }
 
-    static FAutoConsoleCommand CVarDumpUObjects(
-        TEXT("slua.DumpUObjects"),
-        TEXT("Dump all uobject that referenced by lua in main state"),
-        FConsoleCommandDelegate::CreateStatic(dumpUObjects),
-        ECVF_Cheat);
+    void memUsed(FOutputDevice& OutputDevice) {
+        auto state = LuaState::get();
+        int kb = lua_gc(state->getLuaState(), LUA_GCCOUNT, 0);
+        OutputDevice.Logf(TEXT("Lua use memory %d kb"), kb);
+    }
 
-    static FAutoConsoleCommand CVarGC(
-        TEXT("slua.GC"),
-        TEXT("Collect lua garbage"),
-        FConsoleCommandDelegate::CreateStatic(garbageCollect),
-        ECVF_Cheat);
-
-    static FAutoConsoleCommand CVarMem(
-        TEXT("slua.Mem"),
-        TEXT("Print memory used"),
-        FConsoleCommandDelegate::CreateStatic(memUsed),
-        ECVF_Cheat);
-#endif
-
-#if !UE_BUILD_SHIPPING
     void dumpRefUObjects(FOutputDevice& OutputDevice) {
         auto state = LuaState::get();
         if (!state) return;
@@ -499,6 +479,24 @@ namespace NS_SLUA {
             }
         }
     }
+
+    static FAutoConsoleCommand CVarGC(
+        TEXT("slua.GC"),
+        TEXT("Collect lua garbage"),
+        FConsoleCommandDelegate::CreateStatic(garbageCollect),
+        ECVF_Cheat);
+
+    static FAutoConsoleCommandWithOutputDevice CVarDumpUObjects(
+        TEXT("slua.DumpUObjects"),
+        TEXT("Dump all uobject that referenced by lua in main state"),
+        FConsoleCommandWithOutputDeviceDelegate::CreateStatic(dumpUObjects),
+        ECVF_Cheat);
+
+    static FAutoConsoleCommandWithOutputDevice CVarMem(
+        TEXT("slua.Mem"),
+        TEXT("Print memory used"),
+        FConsoleCommandWithOutputDeviceDelegate::CreateStatic(memUsed),
+        ECVF_Cheat);
     
     static FAutoConsoleCommandWithOutputDevice CVarDumpRefUObjects(
         TEXT("slua.DumpRefUObjects"),
