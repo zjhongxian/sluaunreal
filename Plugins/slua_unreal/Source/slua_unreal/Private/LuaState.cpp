@@ -557,9 +557,13 @@ namespace NS_SLUA {
 
         // use custom memory alloc func to profile memory footprint
 #if ENABLE_PROFILER && !UE_BUILD_SHIPPING
+        // use custom memory alloc func to profile memory footprint
         L = lua_newstate(LuaMemoryProfile::alloc,this);
 #else
-        L = luaL_newstate();
+        L = lua_newstate([](void *ud, void *ptr, size_t osize, size_t nsize)
+        {
+            return FMemory::Realloc(ptr, nsize);
+        }, nullptr);
 #endif
         
         lua_atpanic(L,_atPanic);
