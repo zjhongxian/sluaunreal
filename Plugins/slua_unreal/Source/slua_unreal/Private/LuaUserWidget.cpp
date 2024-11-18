@@ -22,7 +22,7 @@ bool ULuaUserWidget::Initialize()
 
         if (GetSelfTable().isValid())
         {
-            CallLuaFunction(TEXT("Initialize"));
+            CallLuaFunctionIfExist(TEXT("Initialize"));
         }
     }
 
