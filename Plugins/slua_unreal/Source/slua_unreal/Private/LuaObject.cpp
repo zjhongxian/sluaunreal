@@ -1676,14 +1676,13 @@ namespace NS_SLUA {
 
     int LuaObject::objectToString(lua_State* L)
     {
-        const int BufMax = 128;
-        static char buffer[BufMax] = { 0 };
         bool isnil;
         UObject* obj = LuaObject::testudata<UObject>(L, 1, isnil);
         if (obj) {
             auto clsname = obj->GetClass()->GetFName().ToString();
             auto objname = obj->GetFName().ToString();
-            snprintf(buffer, BufMax, "%s: %p %s %p",TCHAR_TO_UTF8(*clsname), obj->GetClass(), TCHAR_TO_UTF8(*objname), obj);
+            lua_pushfstring(L, "%s: %p %s %p",TCHAR_TO_UTF8(*clsname), obj->GetClass(), TCHAR_TO_UTF8(*objname), obj);
+            return 1;
         }
         else {
             // if ud isn't a uobject, get __name of metatable to cast it to string
@@ -1692,13 +1691,13 @@ namespace NS_SLUA {
             // should have __name field
             if (tt == LUA_TSTRING) {
                 const char* metaname = lua_tostring(L,-1);
-                snprintf(buffer, BufMax, "%s: %p", metaname,ptr);
+                lua_pushfstring(L, "%s: %p", metaname,ptr);
+                return 1;
             }
             if (tt != LUA_TNIL)
                 lua_pop(L, 1);
         }
-
-        lua_pushstring(L, buffer);
+        lua_pushstring(L, "");
         return 1;
     }
 
