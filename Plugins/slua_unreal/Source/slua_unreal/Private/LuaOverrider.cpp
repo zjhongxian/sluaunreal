@@ -53,7 +53,6 @@ namespace NS_SLUA
 }
 
 TMap<NS_SLUA::lua_State*, ULuaOverrider::ObjectTableMap> ULuaOverrider::objectTableMap;
-ULuaOverrider::ClassNativeMap ULuaOverrider::classSuperFuncs;
 
 #if (ENGINE_MINOR_VERSION<19) && (ENGINE_MAJOR_VERSION==4)
 void ULuaOverrider::luaOverrideFunc(FFrame& Stack, RESULT_DECL)
@@ -349,8 +348,11 @@ void ULuaOverrider::onLuaStateClose(NS_SLUA::lua_State* L)
         auto tableMap = objectTableMap.Find(L);
         for (auto iter : *tableMap)
         {
-            UObject* obj = iter.Key.Get();
-            if (!obj) continue;
+            UObject* obj = iter.Key;
+            if (!NS_SLUA::LuaObject::isUObjectValid(obj))
+            {
+                continue;
+            }
             ILuaOverriderInterface* overrideInterface = Cast<ILuaOverriderInterface>(obj);
             if (!overrideInterface) continue;
             overrideInterface->FuncMap.Empty();
