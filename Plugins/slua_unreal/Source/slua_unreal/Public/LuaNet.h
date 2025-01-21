@@ -68,7 +68,7 @@ namespace NS_SLUA
         static ClassLuaReplicatedMap classLuaReplicatedMap;
 
         typedef TMap<void*, FLuaNetSerializationProxy*> LuaNetSerializationMap;
-        typedef TMap<TWeakObjectPtr<UObject>, void*, FDefaultSetAllocator, TWeakObjectPtrMapKeyFuncs<TWeakObjectPtr<UObject>, void*>> ObjectToLuaNetAddressMap;
+        typedef TMap<UObject*, void*> ObjectToLuaNetAddressMap;
         static LuaNetSerializationMap luaNetSerializationMap;
         static ObjectToLuaNetAddressMap objectToLuaNetAddressMap;
 
