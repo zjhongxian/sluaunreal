@@ -2451,6 +2451,14 @@ namespace NS_SLUA {
             return nullptr;
         }
 
+        auto UD = (UserData<LuaStruct*>*)lua_touserdata(L, i);
+
+        if (!UD)
+            luaL_error(L, "arg %d expect userdata, but got %s", lua_absindex(L, i), lua_typename(L, i));
+
+        if (UD->flag & UD_HADFREE)
+            luaL_error(L, "arg %d had been freed, can't be used", lua_absindex(L, i));
+
         bool isLuaStruct = false;
         
         if (lua_getmetatable(L, i)) {
@@ -2462,19 +2470,20 @@ namespace NS_SLUA {
             lua_pop(L, 2);
         }
         
-        LuaStruct* ls = nullptr;
-        if (isLuaStruct) {
-            auto UD = (UserData<LuaStruct*>*)lua_touserdata(L, i);
-            if (UD->flag & UD_HADFREE)
-                luaL_error(L, "arg %d had been freed, can't be used", lua_absindex(L, i));
-
-            ls = UD->ud;
-        }
-        else {
+        if (!isLuaStruct) {
             auto buf = LuaWrapper::checkValue(L, p, uss, parms, i);
-            if (buf)
-                return buf;
+            if (!buf) {
+                if (luaL_getmetafield(L, i, "__name") == LUA_TSTRING) {
+                    luaL_error(L, "expect struct of %s, but got %s", TCHAR_TO_UTF8(*uss->GetName()), lua_tostring(L, -1));
+                }
+                else {
+                    luaL_error(L, "expect struct of %s, but got %s", TCHAR_TO_UTF8(*uss->GetName()), lua_typename(L, i));
+                }
+            }
+            return buf;
         }
+
+        LuaStruct* ls = UD->ud;
 
         if(!ls) {
             luaL_error(L, "expect struct but got nil");
