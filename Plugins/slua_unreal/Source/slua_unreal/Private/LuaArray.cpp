@@ -33,7 +33,7 @@ namespace NS_SLUA {
         // blueprint stack will destroy the TArray
         // so deep-copy construct FScriptArray
         // it's very expensive
-        if(!srcArray)
+        if(!srcArray || (destArray == srcArray))
             return;
 
         arrayP->CopyCompleteValue(destArray, srcArray);
@@ -43,7 +43,7 @@ namespace NS_SLUA {
         // blueprint stack will destroy the TArray
         // so deep-copy construct FScriptArray
         // it's very expensive
-        if(!srcArray)
+        if(!srcArray || (destArray == srcArray))
             return;
             
         FScriptArrayHelper helper = FScriptArrayHelper::CreateHelperFormInnerProperty(p, destArray);

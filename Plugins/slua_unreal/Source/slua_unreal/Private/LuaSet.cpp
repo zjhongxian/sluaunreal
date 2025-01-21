@@ -72,7 +72,7 @@ namespace NS_SLUA
 
     void LuaSet::clone(FScriptSet* dstSet, FProperty* prop, const FScriptSet* srcSet)
     {
-        if (!srcSet)
+        if (!srcSet || (dstSet == srcSet))
             return;
 
         FScriptSetHelper dstHelper = FScriptSetHelper::CreateHelperFormElementProperty(prop, dstSet);

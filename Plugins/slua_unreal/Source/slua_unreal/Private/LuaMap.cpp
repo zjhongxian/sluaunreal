@@ -46,7 +46,7 @@ namespace NS_SLUA {
     }
 
     void LuaMap::clone(FScriptMap* dest,FProperty* keyProp, FProperty* valueProp,const FScriptMap* src) {
-        if(!src)
+        if(!src || (dest == src))
             return;
 
         FScriptMapHelper dstHelper = FScriptMapHelper::CreateHelperFormInnerProperties(keyProp,valueProp, dest);
