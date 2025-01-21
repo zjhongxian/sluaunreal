@@ -178,7 +178,6 @@ int ULuaDelegate::removeLuaDelegate(NS_SLUA::lua_State* L, ULuaDelegate* obj)
     if (bLuaDelegateTraceEnable)
     {
         LuaDelegateTraceback.Remove(obj->handle);
-        lua_pop(L, 1);
     }
 #endif
     return 0;
