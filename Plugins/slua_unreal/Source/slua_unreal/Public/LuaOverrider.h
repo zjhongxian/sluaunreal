@@ -7,6 +7,16 @@
 #include "UObject/UObjectArray.h"
 #include "LuaOverrider.generated.h"
 
+#ifndef ACCESS_PRIVATE_FIELD
+#define ACCESS_PRIVATE_FIELD(Class, Type, Member) \
+        template <typename Class, Type Class::* M> \
+        struct AccessPrivate##Class##Member { \
+            friend Type Class::* Private##Class##Member() { return M; } \
+        };\
+        Type Class::* Private##Class##Member(); \
+        template struct AccessPrivate##Class##Member<Class, &Class::Member>
+#endif
+
 UCLASS()
 class SLUA_UNREAL_API ULuaOverrider : public UObject
 {

@@ -104,9 +104,9 @@ namespace NS_SLUA
         {
             auto classLuaReplicated = *classLuaReplicatedPtr;
             if (classLuaReplicated->ustruct.IsValid())
-	        {
-	            classLuaReplicated->ustruct->RemoveFromRoot();
-	        }
+            {
+                classLuaReplicated->ustruct->RemoveFromRoot();
+            }
             delete classLuaReplicated;
             classLuaReplicatedMap.Remove(cls);
         }
@@ -558,9 +558,62 @@ namespace NS_SLUA
         {
             cls->ClearFunctionMapsCaches();
             addedRPCClasses.Add(cls);
+            clearClassNetCache(cls);
         }
 
         return bAdded;
+    }
+
+    typedef TMap< TWeakObjectPtr< const UClass >, FClassNetCache* > TClassNetCacheMap;
+    ACCESS_PRIVATE_FIELD(FClassNetCacheMgr, TClassNetCacheMap, ClassFieldIndices);
+
+    void LuaNet::clearClassNetCache(UClass* cls)
+    {
+        static auto netCacheClassFieldIndicesPtr = PrivateFClassNetCacheMgrClassFieldIndices();
+
+        if (!cls || !GEngine){ return;}
+
+        for (const FWorldContext& WorldContext : GEngine->GetWorldContexts())
+        {
+            UWorld* world = WorldContext.World();
+            if (!world){ continue;}
+            UNetDriver* netDriver = world->GetNetDriver();
+            if (!netDriver){ continue;}
+            TSharedPtr<FClassNetCacheMgr> netCache = netDriver->NetCache;
+            if (!netCache.IsValid()){ continue; }
+
+            TClassNetCacheMap& netCacheMap = netCache.Get()->*netCacheClassFieldIndicesPtr;
+
+            // clear Children first
+            TArray<TWeakObjectPtr< const UClass >> keys;
+            netCacheMap.GetKeys(keys);
+            for (TWeakObjectPtr< const UClass > key : keys)
+            {
+                auto keyCls = key.Get();
+                if (keyCls && keyCls != cls && key->IsChildOf(cls))
+                {
+                    if (FClassNetCache** keyClassNetCache = netCacheMap.Find(key))
+                    {
+                        delete *keyClassNetCache;
+                    }
+#if !((ENGINE_MINOR_VERSION<20) && (ENGINE_MAJOR_VERSION==4))
+                    const_cast<UClass*>(keyCls)->ClassFlags &= ~CLASS_ReplicationDataIsSetUp;
+#endif
+                    netCacheMap.Remove(key);
+                }
+            }
+
+            if (FClassNetCache** classNetCache = netCacheMap.Find(cls))
+            {
+                delete *classNetCache;
+#if !((ENGINE_MINOR_VERSION<20) && (ENGINE_MAJOR_VERSION==4))
+                cls->ClassFlags &= ~CLASS_ReplicationDataIsSetUp;
+#endif
+                netCacheMap.Remove(cls);
+            }
+
+            netCacheMap.Compact();
+        }
     }
 
     LuaVar getLuaImpl(lua_State* L, const LuaVar& luaModule)

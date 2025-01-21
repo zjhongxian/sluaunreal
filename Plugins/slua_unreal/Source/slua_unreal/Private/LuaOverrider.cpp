@@ -523,14 +523,6 @@ namespace NS_SLUA
 #if (ENGINE_MINOR_VERSION<25) && (ENGINE_MAJOR_VERSION==4)
     LuaOverrider::FBlueprintFlushReinstancingQueue LuaOverrider::blueprintFlushReinstancingQueue;
 #endif
-
-    #define ACCESS_PRIVATE_FIELD(Class, Type, Member) \
-        template <typename Class, Type Class::* M> \
-        struct AccessPrivate##Class##Member { \
-            friend Type Class::* Private##Class##Member() { return M; } \
-        };\
-        Type Class::* Private##Class##Member(); \
-        template struct AccessPrivate##Class##Member<Class, &Class::Member>
     
     LuaOverrider::LuaOverrider(NS_SLUA::LuaState* luaState)
         : sluaState(luaState)
