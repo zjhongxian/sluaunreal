@@ -325,32 +325,91 @@ namespace NS_SLUA {
     }
 
     int LuaArray::Get(lua_State* L) {
+        int top = lua_gettop(L);
+
         CheckUD(LuaArray, L, 1);
         if (!UD) {
             luaL_error(L, "arg 1 expect LuaArray, but got nil!");
         }
-        int i = LuaObject::checkValue<int>(L,2);
+        int index = LuaObject::checkValue<int>(L,2);
         FProperty* element = UD->inner;
-        if (!UD->isValidIndex(i)) {
-            luaL_error(L, "Array get index %d out of range", i);
+        if (!UD->isValidIndex(index)) {
+            luaL_error(L, "Array get index %d out of range", index);
             return 0;
         }
-        return LuaObject::push(L,element,UD->getRawPtr(i));
+
+    	auto prop = element;
+        auto valuePtr = UD->getRawPtr(index);
+
+        int outIndex = 0;
+        if (top > 2)
+        {
+            for (int i = 3; i <= top; ++i)
+            {
+                int keyType = lua_type(L, i);
+                if ((keyType == LUA_TNIL || keyType == LUA_TUSERDATA) && i == top)
+                {
+                    outIndex = i;
+                    break;
+                }
+
+                auto p = CastField<FStructProperty>(element);
+                if (!p)
+                {
+                    return 0;
+                }
+
+                const char* key = lua_tostring(L, i);
+                prop = LuaObject::findCacheProperty(L, p->Struct, key);
+                if (!prop)
+                {
+                    return 0;
+                }
+                valuePtr = prop->ContainerPtrToValuePtr<uint8>(valuePtr);
+            }
+
+            auto pusher = LuaObject::getPusher(prop);
+            return pusher(L, prop, valuePtr, outIndex, nullptr);
+        }
+
+        return LuaObject::push(L, prop, valuePtr);
     }
 
     int LuaArray::Set(lua_State* L)
     {
+        int top = lua_gettop(L);
+
         CheckUD(LuaArray, L, 1);
         if (!UD) {
             luaL_error(L, "arg 1 expect LuaArray, but got nil!");
         }
         int index = LuaObject::checkValue<int>(L, 2);
+        if (!UD->isValidIndex(index))
+            luaL_error(L, "Array set index %d out of range", index);
+
         FProperty* element = UD->inner;
+        auto valuePtr = UD->getRawPtr(index);
+
+        for (int i = 3; i < top; ++i)
+        {
+            auto p = CastField<FStructProperty>(element);
+            if (!p)
+            {
+                luaL_error(L, "only struct property support but got %s", TCHAR_TO_UTF8(*p->GetName()));
+            }
+
+            const char* key = lua_tostring(L, i);
+            element = LuaObject::findCacheProperty(L, p->Struct, key);
+            if (!element)
+            {
+                luaL_error(L, "%s of %s's member not found.", key, TCHAR_TO_UTF8(*p->GetName()));
+            }
+            valuePtr = element->ContainerPtrToValuePtr<uint8>(valuePtr);
+        }
+
         auto checker = LuaObject::getChecker(element);
         if (checker) {
-            if (!UD->isValidIndex(index))
-                luaL_error(L, "Array set index %d out of range", index);
-            checker(L, element, UD->getRawPtr(index), 3, true);
+            checker(L, element, valuePtr, top, true);
         }
         else {
             FString tn = element->GetClass()->GetName();

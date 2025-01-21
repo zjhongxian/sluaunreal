@@ -46,11 +46,12 @@ end
 
 function testcase()
     -- require 'TestPerf'
-    require 'TestUI'
-    require 'TestCase'
-    require 'TestStruct'
-    require 'TestInterface'
-    require 'TestCppBinding'
+    require('TestUI')
+    require('TestCase')
+    require('TestStruct')
+    require('TestInterface')
+    require('TestCppBinding')
+    require('TestGCOptimise')
     TestBp=require 'TestBlueprint'
     TestBp:test(gworld,gactor)
 

@@ -351,9 +351,13 @@ namespace NS_SLUA {
         return LuaObject::push(L, UD->num());
     }
 
-    int LuaMap::Get(lua_State* L) {
+    int LuaMap::Get(lua_State* L)
+    {
+        int top = lua_gettop(L);
+
         CheckUD(LuaMap, L, 1);
-        if (!UD) {
+        if (!UD)
+        {
             luaL_error(L, "arg 1 expect LuaMap, but got nil!");
         }
         GET_CHECKER(key);
@@ -362,14 +366,102 @@ namespace NS_SLUA {
         keyChecker(L, UD->keyProp, (uint8*)keyPtr, 2, true);
 
         auto valuePtr = UD->helper.FindValueFromHash(keyPtr);
-        if (valuePtr) {
-            LuaObject::push(L, UD->valueProp, valuePtr);
+        if (valuePtr)
+        {
+            auto prop = UD->valueProp;
+            int outIndex = 0;
+            if (top > 2)
+            {
+                for (int i = 3; i <= top; ++i)
+                {
+                    int keyType = lua_type(L, i);
+                    if ((keyType == LUA_TNIL || keyType == LUA_TUSERDATA) && i == top)
+                    {
+                        outIndex = i;
+                        break;
+                    }
+
+                    auto p = CastField<FStructProperty>(prop);
+                    if (!p)
+                    {
+                        LuaObject::pushNil(L);
+                        LuaObject::push(L, true);
+                        return 2;
+                    }
+
+                    const char* key = lua_tostring(L, i);
+                    prop = LuaObject::findCacheProperty(L, p->Struct, key);
+                    if (!prop)
+                    {
+                        LuaObject::pushNil(L);
+                        LuaObject::push(L, true);
+                        return 2;
+                    }
+                    valuePtr = prop->ContainerPtrToValuePtr<uint8>(valuePtr);
+                }
+            }
+
+            auto pusher = LuaObject::getPusher(prop);
+            pusher(L, prop, valuePtr, outIndex, nullptr);
             LuaObject::push(L, true);
-        } else {
-            LuaObject::pushNil(L);
-            LuaObject::push(L, false);
+            return 2;
         }
+
+        LuaObject::pushNil(L);
+        LuaObject::push(L, false);
         return 2;
+    }
+
+    int LuaMap::Set(lua_State* L)
+    {
+        int top = lua_gettop(L);
+
+        CheckUD(LuaMap, L, 1);
+        if (!UD) 
+        {
+            luaL_error(L, "arg 1 expect LuaMap, but got nil!");
+        }
+
+        if (top < 3)
+        {
+            luaL_error(L, "expect 3 or more arguments, but got %d!", top);
+        }
+
+        GET_CHECKER(key);
+        FDefaultConstructedPropertyElement tempKey(UD->keyProp);
+        auto keyPtr = tempKey.GetObjAddress();
+        keyChecker(L, UD->keyProp, (uint8*)keyPtr, 2, true);
+        auto valuePtr = UD->helper.FindValueFromHash(keyPtr);
+
+        if (!valuePtr)
+        {
+        	luaL_error(L, "Map key[%s] not found!", lua_tostring(L, 2));
+            return 0;
+        }
+
+        auto prop = UD->valueProp;
+        for (int i = 3; i < top; ++i)
+        {
+            auto p = CastField<FStructProperty>(prop);
+            if (!p)
+            {
+                luaL_error(L, "only struct property support but got %s", TCHAR_TO_UTF8(*p->GetName()));
+            }
+
+            const char* key = lua_tostring(L, i);
+            prop = LuaObject::findCacheProperty(L, p->Struct, key);
+            if (!prop)
+            {
+                luaL_error(L, "%s of %s's member not found.", key, TCHAR_TO_UTF8(*p->GetName()));
+            }
+            valuePtr = prop->ContainerPtrToValuePtr<uint8>(valuePtr);
+        }
+
+        auto valueChecker = LuaObject::getChecker(prop);
+        valueChecker(L, prop, (uint8*)valuePtr, top, true);
+
+        lua_pushboolean(L, 1);
+        return 1;
     }
 
     int LuaMap::Add(lua_State* L) {
@@ -500,6 +592,7 @@ namespace NS_SLUA {
         RegMetaMethod(L, Pairs);
         RegMetaMethod(L, Num);
         RegMetaMethod(L, Get);
+        RegMetaMethod(L, Set);
         RegMetaMethod(L, Add);
         RegMetaMethod(L, Remove);
         RegMetaMethod(L, Clear);
