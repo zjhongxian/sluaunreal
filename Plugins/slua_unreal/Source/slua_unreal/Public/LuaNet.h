@@ -28,7 +28,7 @@ namespace NS_SLUA
         static void addLuaRepilcateClass(const UClass* someBase);
         static bool isLuaReplicateObject(UObject* obj);
 
-        static void addLuaRPCType(const FString& rpcType, EFunctionFlags netFlag);
+        static void addLuaRPCType(const FString& rpcTypeName, EFunctionFlags netFlag);
         
         static ClassLuaReplicated* addClassReplicatedProps(NS_SLUA::lua_State* L, UObject* obj, const NS_SLUA::LuaVar& luaModule);
         static void initLuaReplicatedProps(NS_SLUA::lua_State* L, UObject* obj, const ClassLuaReplicated& classReplicated, const NS_SLUA::LuaVar& luaTable);
@@ -74,7 +74,14 @@ namespace NS_SLUA
 
         static TArray<const UClass*, TAlignedHeapAllocator<16>> luaReplicateClasses;
 
-        static TMap<FString, EFunctionFlags> luaRPCTypeMap;
+        struct FLuaRPCType
+        {
+	        FString typeName;
+            EFunctionFlags netFlags;
+        };
+        typedef TArray<FLuaRPCType> FLuaRPCTypeList;
+
+        static FLuaRPCTypeList luaRPCTypeList;
         static TSet<TWeakObjectPtr<UClass>> addedRPCClasses;
 #if WITH_EDITOR
         static TSet<TWeakObjectPtr<UFunction>> luaRPCFuncs;

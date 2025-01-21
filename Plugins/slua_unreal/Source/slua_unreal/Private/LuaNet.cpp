@@ -31,7 +31,7 @@ namespace NS_SLUA
 #if WITH_EDITOR
     TSet<TWeakObjectPtr<UFunction>> LuaNet::luaRPCFuncs;
 #endif
-    TMap<FString, EFunctionFlags> LuaNet::luaRPCTypeMap = {
+    LuaNet::FLuaRPCTypeList LuaNet::luaRPCTypeList = {
         {TEXT("MulticastRPC"), FUNC_NetMulticast},
         {TEXT("ServerRPC"), FUNC_NetServer},
         {TEXT("ClientRPC"), FUNC_NetClient}
@@ -112,9 +112,10 @@ namespace NS_SLUA
         }
     }
 
-    void LuaNet::addLuaRPCType(const FString& rpcType, EFunctionFlags netFlag)
+    void LuaNet::addLuaRPCType(const FString& rpcTypeName, EFunctionFlags netFlag)
     {
-        luaRPCTypeMap.Add(rpcType, netFlag);
+        check(!luaRPCTypeList.FindByPredicate([&rpcTypeName](const FLuaRPCType& rpcType) { return rpcType.typeName == rpcTypeName; }));
+        luaRPCTypeList.Add({ rpcTypeName, netFlag});
     }
 
     ClassLuaReplicated* LuaNet::addClassReplicatedProps(NS_SLUA::lua_State* L, UObject* obj, const NS_SLUA::LuaVar& luaModule)
@@ -639,9 +640,10 @@ namespace NS_SLUA
             bAdded |= addModuleRPCRecursive(L, cls, luaSuperModule, cppSuperModule);
         }
 
-        for (TMap<FString, EFunctionFlags>::TConstIterator iter(LuaNet::luaRPCTypeMap); iter; ++iter)
+        for (auto &iter : LuaNet::luaRPCTypeList)
         {
-            bAdded |= addClassRPCByType(L, cls, luaModule, iter.Key(), iter.Value());
+            const char* varstring = const_cast<LuaVar*>(&luaModule)->toString();
+            bAdded |= addClassRPCByType(L, cls, luaModule, iter.typeName, iter.netFlags);
         }
         return bAdded;
     }
