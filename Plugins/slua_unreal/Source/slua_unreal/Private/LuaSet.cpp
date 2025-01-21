@@ -161,7 +161,7 @@ namespace NS_SLUA
         const auto index = UD->helper.FindElementIndexFromHash(elementPtr);
         if (index != INDEX_NONE)
         {
-            LuaObject::push(L, UD->inner, UD->helper.GetElementPtr(index));
+            lua_pushvalue(L, 2);
             LuaObject::push(L, true);
         }
         else
