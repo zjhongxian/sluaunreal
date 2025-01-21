@@ -2442,7 +2442,7 @@ namespace NS_SLUA {
         auto outerFunc = Cast<UFunction>(p->GetOwnerUObject());
 #endif
         if (lua_istable(L, i)) {
-            // Don't delete this below code: if you wan't strict limit for output parameter, then open it.
+            // Don't delete this below code: if you want strict limit for output parameter, then open it.
             /*if (IsReferenceParam(p->PropertyFlags, outerFunc) && !(p->PropertyFlags & CPF_ConstParm)) {
                 luaL_error(L, "reference arg %d expect %s, but got lua table!", i, TCHAR_TO_UTF8(*uss->GetName()));
                 return nullptr;
