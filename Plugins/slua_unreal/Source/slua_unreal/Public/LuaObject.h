@@ -132,6 +132,16 @@ namespace NS_SLUA {
 
     DefTypeName(LuaStruct)
 
+	template<class T>
+    struct IsLuaStruct {
+        enum { value = std::is_same<LuaStruct, T>::value };
+    };
+
+    template<class T>
+    struct IsLuaStruct<T*> {
+        enum { value = IsLuaStruct<T>::value };
+    };
+
     #define UD_NOFLAG 0
     #define UD_AUTOGC 1 // flag userdata should call __gc and maintain by lua
     #define UD_HADFREE 1<<2 // flag userdata had been freed
@@ -816,7 +826,7 @@ namespace NS_SLUA {
             return ret;
         }
 
-        template<class T, bool F = IsUObject<T>::value >
+        template<class T, bool bIsObject = IsUObject<T>::value, bool bIsStruct = IsLuaStruct<T>::value >
         static int pushType(lua_State* L,T cls,const char* tn,lua_CFunction setupmt=nullptr,lua_CFunction gc=nullptr, short nuvalues=1) {
             if(!cls) {
                 lua_pushnil(L);
@@ -831,7 +841,8 @@ namespace NS_SLUA {
             ud->parent = nullptr;
             ud->ud = cls;
             ud->flag = gc!=nullptr?UD_AUTOGC:UD_NOFLAG;
-            if (F) ud->flag |= UD_UOBJECT;
+            if (bIsObject) ud->flag |= UD_UOBJECT;
+            if (bIsStruct) ud->flag |= UD_USTRUCT;
             setupMetaTable(L,tn,setupmt,gc);
             return 1;
         }
