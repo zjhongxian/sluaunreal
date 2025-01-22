@@ -252,7 +252,7 @@ namespace NS_SLUA {
     }
 
     int LuaArray::push(lua_State* L,FProperty* inner,FScriptArray* data, bool bIsNewInner) {
-        if (LuaObject::isBinStringProperty(inner))
+        if (LuaObject::isBinStringProperty(inner) && !bIsNewInner)
         {
             char* dest = (char*)data->GetData();
             int32 len = data->Num();
