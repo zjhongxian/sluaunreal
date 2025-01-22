@@ -33,6 +33,7 @@ print(string.format("i2=%d", i2))
 
 print("FVector.OneVector:", FVector.OneVector, FVector.OneVector)
 assert(FVector.OneVector == FVector.OneVector)
+xpcall(function () FVector.OneVector.X = 0 end, function (msg) print("static const value assign test:", debug.traceback(msg, 2)) end)
 --[[local normalVector = FVector.OneVector:GetSafeNormal(0, FVector.OneVector)
 print("FVector NormalVector:", normalVector, normalVector.X, normalVector.Y, normalVector.Z)
 FVector.UpVector:GetSafeNormal(0, FVector.OneVector, normalVector)
