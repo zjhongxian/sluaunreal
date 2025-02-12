@@ -1701,9 +1701,21 @@ namespace NS_SLUA {
         return 1;
     }
 
-    void LuaObject::setupMetaTable(lua_State* L, const char* tn, lua_CFunction setupmt, lua_CFunction gc)
+    void LuaObject::setupMetaTable(lua_State* L, const char* tn, lua_CFunction setupmt, lua_CFunction gc, const char* basetype)
     {
         if (luaL_newmetatable(L, tn)) {
+            if (basetype) {
+                // create base table
+                lua_newtable(L);
+                lua_pushvalue(L, -1);
+                lua_setfield(L, -3, "__base");
+
+                lua_pushstring(L, basetype);
+                lua_seti(L, -2, 1);
+
+                // pop __base type
+                lua_pop(L, 1);
+            }
             if (setupmt)
                 setupmt(L);
             if (gc) {
@@ -2813,6 +2825,11 @@ namespace NS_SLUA {
         bool isbpEnum = Cast<UUserDefinedEnum>(e) != nullptr;
         // return a enum as table
         lua_newtable(L);
+
+        // save SLUA_CPPINST as PathName
+        lua_pushstring(L, TCHAR_TO_UTF8(*e->GetPathName()));
+        lua_setfield(L, -2, SLUA_CPPINST);
+
         int num = e->NumEnums();
         for (int i = 0; i < num; i++) {
             FString name;

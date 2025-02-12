@@ -132,7 +132,7 @@ namespace NS_SLUA {
 
     DefTypeName(LuaStruct)
 
-	template<class T>
+    template<class T>
     struct IsLuaStruct {
         enum { value = std::is_same<LuaStruct, T>::value };
     };
@@ -241,7 +241,8 @@ namespace NS_SLUA {
         }
 
         template<typename T>
-        static T* maybeAnUDTable(lua_State* L, int p) {
+        static typename std::enable_if<!std::is_base_of<UObject, T>::value, T*>::type
+        maybeAnUDTable(lua_State* L, int p) {
             if(lua_istable(L, p)) {
                 AutoStack as(L);
                 // use lua_rawget instead of lua_getfield to avoid __index loop!
@@ -252,6 +253,42 @@ namespace NS_SLUA {
                     return (T*)ud;
                 }
                 check(lua_type(L, -1) != LUA_TUSERDATA);
+            }
+            return nullptr;
+        }
+
+        template<typename T>
+        static typename std::enable_if<std::is_base_of<UObject, T>::value, T*>::type
+        maybeAnUDTable(lua_State* L, int p) {
+            if (lua_istable(L, p)) {
+                AutoStack as(L);
+                // use lua_rawget instead of lua_getfield to avoid __index loop!
+                lua_pushstring(L, SLUA_CPPINST);
+                lua_rawget(L, p);
+                int t = lua_type(L, -1);
+                if (t == LUA_TLIGHTUSERDATA) {
+                    void* ud = lua_touserdata(L, -1);
+                    return (T*)ud;
+                }
+                else if (t == LUA_TSTRING) { // SLUA_CPPINST is saved as PathName
+                    FString path(UTF8_TO_TCHAR(lua_tostring(L, -1)));
+#if ENGINE_MAJOR_VERSION==5 && ENGINE_MINOR_VERSION>0
+                    static UPackage* AnyPackage = (UPackage*)-1;
+#else
+                    static UPackage* AnyPackage = ANY_PACKAGE;
+#endif
+                    T* ret;
+                    UObject* obj = FindObject<UObject>(AnyPackage, *path);
+                    if (obj) {
+                        ret = Cast<T>(obj);
+                    }
+                    else {
+                        // Try to load object if not found!
+                        ret = Cast<T>(LoadObject<UObject>(NULL, *path));
+                    }
+
+                    return ret;
+                }
             }
             return nullptr;
         }
@@ -826,25 +863,43 @@ namespace NS_SLUA {
             return ret;
         }
 
-        template<class T, bool bIsObject = IsUObject<T>::value, bool bIsStruct = IsLuaStruct<T>::value >
-        static int pushType(lua_State* L,T cls,const char* tn,lua_CFunction setupmt=nullptr,lua_CFunction gc=nullptr, short nuvalues=1) {
-            if(!cls) {
+        template <class T, bool bIsObject, bool bIsStruct>
+        static int pushTypeImp(lua_State* L, T cls, const char* tn, lua_CFunction setupmt, lua_CFunction gc, short nuvalues, const char* basetype)
+        {
+            if (!cls) {
                 lua_pushnil(L);
                 return 1;
             }
             ensure(nuvalues <= 1);
 #if LUA_VERSION_NUM > 503 
-            UserData<T>* ud = reinterpret_cast< UserData<T>* >(lua_newuserdatauv(L, sizeof(UserData<T>), nuvalues));
+            UserData<T>* ud = reinterpret_cast<UserData<T>*>(lua_newuserdatauv(L, sizeof(UserData<T>), nuvalues));
 #else
-            UserData<T>* ud = reinterpret_cast< UserData<T>* >(lua_newuserdata(L, sizeof(UserData<T>)));
+            UserData<T>* ud = reinterpret_cast<UserData<T>*>(lua_newuserdata(L, sizeof(UserData<T>)));
 #endif
             ud->parent = nullptr;
             ud->ud = cls;
-            ud->flag = gc!=nullptr?UD_AUTOGC:UD_NOFLAG;
+            ud->flag = gc != nullptr ? UD_AUTOGC : UD_NOFLAG;
             if (bIsObject) ud->flag |= UD_UOBJECT;
             if (bIsStruct) ud->flag |= UD_USTRUCT;
-            setupMetaTable(L,tn,setupmt,gc);
+            setupMetaTable(L, tn, setupmt, gc, basetype);
             return 1;
+        }
+
+        template<class T, bool bIsObject = IsUObject<T>::value, bool bIsStruct = IsLuaStruct<T>::value >
+        static int pushType(lua_State* L,T cls,const char* tn,lua_CFunction setupmt=nullptr,lua_CFunction gc=nullptr, short nuvalues=1) {
+            return pushTypeImp<T, bIsObject, bIsStruct>(L, cls, tn, setupmt, gc, nuvalues, nullptr);
+        }
+
+        template<>
+        static int pushType(lua_State* L, UClass* cls, const char* tn, lua_CFunction setupmt, lua_CFunction gc, short nuvalues)
+        {
+            return pushTypeImp<UClass*, true, false>(L, cls, tn, setupmt, gc, nuvalues, "UObject");
+        }
+
+        template<>
+        static int pushType(lua_State* L, UScriptStruct* cls, const char* tn, lua_CFunction setupmt, lua_CFunction gc, short nuvalues)
+        {
+            return pushTypeImp<UScriptStruct*, true, false>(L, cls, tn, setupmt, gc, nuvalues, "UObject");
         }
 
         static const char* getType(lua_State* L, int p);
@@ -1081,7 +1136,7 @@ namespace NS_SLUA {
         static int gcStructClass(lua_State* L);
         static int gcStruct(lua_State* L);
         static int objectToString(lua_State* L);
-        static void setupMetaTable(lua_State* L,const char* tn,lua_CFunction setupmt,lua_CFunction gc);
+        static void setupMetaTable(lua_State* L,const char* tn,lua_CFunction setupmt,lua_CFunction gc, const char* basetype);
         static void setupMetaTable(lua_State* L, const char* tn, lua_CFunction setupmt, int gc);
         static void setupMetaTable(lua_State* L, const char* tn, lua_CFunction gc);
         static void createTable(lua_State* L, const char* tn);
