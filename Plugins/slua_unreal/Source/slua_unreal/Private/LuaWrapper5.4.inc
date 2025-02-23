@@ -8806,6 +8806,13 @@
                 LuaObject::push<FVector>(L, "FVector", ret, UD_AUTOGC | UD_VALUETYPE);
                 return 1;
             }
+            if (lua_isnumber(L, 2)) {
+                auto Bias = LuaObject::checkValue<double>(L, 2);
+                auto ret = __newFVector();
+                *ret = (*self + Bias);
+                LuaObject::push<FVector>(L, "FVector", ret, UD_AUTOGC | UD_VALUETYPE);
+                return 1;
+            }
             luaL_error(L, "FVector operator__add error, arg=%d", lua_typename(L, 2));
             return 0;
         }
@@ -8820,6 +8827,12 @@
                 }
                 auto& VRef = *V;
                 *self = *self + VRef;
+                lua_pushvalue(L, 1);
+                return 1;
+            }
+            if (lua_isnumber(L, 2)) {
+                auto Bias = LuaObject::checkValue<double>(L, 2);
+                *self = *self + Bias;
                 lua_pushvalue(L, 1);
                 return 1;
             }
@@ -8841,6 +8854,13 @@
                 LuaObject::push<FVector>(L, "FVector", ret, UD_AUTOGC | UD_VALUETYPE);
                 return 1;
             }
+            if (lua_isnumber(L, 2)) {
+                auto Bias = LuaObject::checkValue<double>(L, 2);
+                auto ret = __newFVector();
+                *ret = (*self - Bias);
+                LuaObject::push<FVector>(L, "FVector", ret, UD_AUTOGC | UD_VALUETYPE);
+                return 1;
+            }
             luaL_error(L, "FVector operator__sub error, arg=%d", lua_typename(L, 2));
             return 0;
         }
@@ -8858,12 +8878,25 @@
                 lua_pushvalue(L, 1);
                 return 1;
             }
+            if (lua_isnumber(L, 2)) {
+                auto Bias = LuaObject::checkValue<double>(L, 2);
+                *self = *self - Bias;
+                lua_pushvalue(L, 1);
+                return 1;
+            }
             luaL_error(L, "FVector operator sub error, arg=%d", lua_typename(L, 2));
             return 0;
         }
 
         static int __mul(lua_State* L) {
             CheckSelf(FVector);
+            if (lua_isnumber(L, 2)) {
+                auto Scale = LuaObject::checkValue<double>(L, 2);
+                auto ret = __newFVector();
+                *ret = (*self * Scale);
+                LuaObject::push<FVector>(L, "FVector", ret, UD_AUTOGC | UD_VALUETYPE);
+                return 1;
+            }
             if (LuaObject::matchType(L, 2, "FVector")) {
                 auto V = LuaObject::checkValue<FVector*>(L, 2);
                 if (!V) {
@@ -8882,6 +8915,12 @@
 
         static int mul(lua_State* L) {
             CheckSelf(FVector);
+            if (lua_isnumber(L, 2)) {
+                auto Scale = LuaObject::checkValue<double>(L, 2);
+                *self = *self * Scale;
+                lua_pushvalue(L, 1);
+                return 1;
+            }
             if (LuaObject::matchType(L, 2, "FVector")) {
                 auto V = LuaObject::checkValue<FVector*>(L, 2);
                 if (!V) {
@@ -8899,6 +8938,13 @@
 
         static int __div(lua_State* L) {
             CheckSelf(FVector);
+            if (lua_isnumber(L, 2)) {
+                auto Scale = LuaObject::checkValue<double>(L, 2);
+                auto ret = __newFVector();
+                *ret = (*self / Scale);
+                LuaObject::push<FVector>(L, "FVector", ret, UD_AUTOGC | UD_VALUETYPE);
+                return 1;
+            }
             if (LuaObject::matchType(L, 2, "FVector")) {
                 auto V = LuaObject::checkValue<FVector*>(L, 2);
                 if (!V) {
@@ -8917,6 +8963,12 @@
 
         static int div(lua_State* L) {
             CheckSelf(FVector);
+            if (lua_isnumber(L, 2)) {
+                auto Scale = LuaObject::checkValue<double>(L, 2);
+                *self = *self / Scale;
+                lua_pushvalue(L, 1);
+                return 1;
+            }
             if (LuaObject::matchType(L, 2, "FVector")) {
                 auto V = LuaObject::checkValue<FVector*>(L, 2);
                 if (!V) {
@@ -10755,43 +10807,15 @@
             return 0;
         }
 
-        static int __div(lua_State* L) {
+        static int __mul(lua_State* L) {
             CheckSelf(FVector4);
-            if (LuaObject::matchType(L, 2, "FVector4")) {
-                auto V = LuaObject::checkValue<FVector4*>(L, 2);
-                if (!V) {
-                    luaL_error(L, "%s argument 2 is nullptr", __FUNCTION__);
-                    return 0;
-                }
-                auto& VRef = *V;
+            if (lua_isnumber(L, 2)) {
+                auto Scale = LuaObject::checkValue<double>(L, 2);
                 auto ret = __newFVector4();
-                *ret = (*self / VRef);
+                *ret = (*self * Scale);
                 LuaObject::push<FVector4>(L, "FVector4", ret, UD_AUTOGC | UD_VALUETYPE);
                 return 1;
             }
-            luaL_error(L, "FVector4 operator__div error, arg=%d", lua_typename(L, 2));
-            return 0;
-        }
-
-        static int div(lua_State* L) {
-            CheckSelf(FVector4);
-            if (LuaObject::matchType(L, 2, "FVector4")) {
-                auto V = LuaObject::checkValue<FVector4*>(L, 2);
-                if (!V) {
-                    luaL_error(L, "%s argument 2 is nullptr", __FUNCTION__);
-                    return 0;
-                }
-                auto& VRef = *V;
-                *self = *self / VRef;
-                lua_pushvalue(L, 1);
-                return 1;
-            }
-            luaL_error(L, "FVector4 operator div error, arg=%d", lua_typename(L, 2));
-            return 0;
-        }
-
-        static int __mul(lua_State* L) {
-            CheckSelf(FVector4);
             if (LuaObject::matchType(L, 2, "FVector4")) {
                 auto V = LuaObject::checkValue<FVector4*>(L, 2);
                 if (!V) {
@@ -10810,6 +10834,12 @@
 
         static int mul(lua_State* L) {
             CheckSelf(FVector4);
+            if (lua_isnumber(L, 2)) {
+                auto Scale = LuaObject::checkValue<double>(L, 2);
+                *self = *self * Scale;
+                lua_pushvalue(L, 1);
+                return 1;
+            }
             if (LuaObject::matchType(L, 2, "FVector4")) {
                 auto V = LuaObject::checkValue<FVector4*>(L, 2);
                 if (!V) {
@@ -10822,6 +10852,54 @@
                 return 1;
             }
             luaL_error(L, "FVector4 operator mul error, arg=%d", lua_typename(L, 2));
+            return 0;
+        }
+
+        static int __div(lua_State* L) {
+            CheckSelf(FVector4);
+            if (lua_isnumber(L, 2)) {
+                auto Scale = LuaObject::checkValue<double>(L, 2);
+                auto ret = __newFVector4();
+                *ret = (*self / Scale);
+                LuaObject::push<FVector4>(L, "FVector4", ret, UD_AUTOGC | UD_VALUETYPE);
+                return 1;
+            }
+            if (LuaObject::matchType(L, 2, "FVector4")) {
+                auto V = LuaObject::checkValue<FVector4*>(L, 2);
+                if (!V) {
+                    luaL_error(L, "%s argument 2 is nullptr", __FUNCTION__);
+                    return 0;
+                }
+                auto& VRef = *V;
+                auto ret = __newFVector4();
+                *ret = (*self / VRef);
+                LuaObject::push<FVector4>(L, "FVector4", ret, UD_AUTOGC | UD_VALUETYPE);
+                return 1;
+            }
+            luaL_error(L, "FVector4 operator__div error, arg=%d", lua_typename(L, 2));
+            return 0;
+        }
+
+        static int div(lua_State* L) {
+            CheckSelf(FVector4);
+            if (lua_isnumber(L, 2)) {
+                auto Scale = LuaObject::checkValue<double>(L, 2);
+                *self = *self / Scale;
+                lua_pushvalue(L, 1);
+                return 1;
+            }
+            if (LuaObject::matchType(L, 2, "FVector4")) {
+                auto V = LuaObject::checkValue<FVector4*>(L, 2);
+                if (!V) {
+                    luaL_error(L, "%s argument 2 is nullptr", __FUNCTION__);
+                    return 0;
+                }
+                auto& VRef = *V;
+                *self = *self / VRef;
+                lua_pushvalue(L, 1);
+                return 1;
+            }
+            luaL_error(L, "FVector4 operator div error, arg=%d", lua_typename(L, 2));
             return 0;
         }
 
@@ -11176,10 +11254,10 @@
             LuaObject::addOperator(L, "add", add);
             LuaObject::addOperator(L, "__sub", __sub);
             LuaObject::addOperator(L, "sub", sub);
-            LuaObject::addOperator(L, "__div", __div);
-            LuaObject::addOperator(L, "div", div);
             LuaObject::addOperator(L, "__mul", __mul);
             LuaObject::addOperator(L, "mul", mul);
+            LuaObject::addOperator(L, "__div", __div);
+            LuaObject::addOperator(L, "div", div);
             LuaObject::addOperator(L, "__eq", __eq);
             LuaObject::addField(L, "X", get_X, set_X, true);
             LuaObject::addField(L, "Y", get_Y, set_Y, true);
@@ -11816,6 +11894,13 @@
                 LuaObject::push<FMatrix>(L, "FMatrix", ret, UD_AUTOGC | UD_VALUETYPE);
                 return 1;
             }
+            if (lua_isnumber(L, 2)) {
+                auto Scale = LuaObject::checkValue<double>(L, 2);
+                auto ret = __newFQuat();
+                *ret = (*self * Scale);
+                LuaObject::push<FQuat>(L, "FQuat", ret, UD_AUTOGC | UD_VALUETYPE);
+                return 1;
+            }
             luaL_error(L, "FQuat operator__mul error, arg=%d", lua_typename(L, 2));
             return 0;
         }
@@ -11833,7 +11918,38 @@
                 lua_pushvalue(L, 1);
                 return 1;
             }
+            if (lua_isnumber(L, 2)) {
+                auto Scale = LuaObject::checkValue<double>(L, 2);
+                *self = *self * Scale;
+                lua_pushvalue(L, 1);
+                return 1;
+            }
             luaL_error(L, "FQuat operator mul error, arg=%d", lua_typename(L, 2));
+            return 0;
+        }
+
+        static int __div(lua_State* L) {
+            CheckSelf(FQuat);
+            if (lua_isnumber(L, 2)) {
+                auto Scale = LuaObject::checkValue<double>(L, 2);
+                auto ret = __newFQuat();
+                *ret = (*self / Scale);
+                LuaObject::push<FQuat>(L, "FQuat", ret, UD_AUTOGC | UD_VALUETYPE);
+                return 1;
+            }
+            luaL_error(L, "FQuat operator__div error, arg=%d", lua_typename(L, 2));
+            return 0;
+        }
+
+        static int div(lua_State* L) {
+            CheckSelf(FQuat);
+            if (lua_isnumber(L, 2)) {
+                auto Scale = LuaObject::checkValue<double>(L, 2);
+                *self = *self / Scale;
+                lua_pushvalue(L, 1);
+                return 1;
+            }
+            luaL_error(L, "FQuat operator div error, arg=%d", lua_typename(L, 2));
             return 0;
         }
 
@@ -12892,6 +13008,8 @@
             LuaObject::addOperator(L, "sub", sub);
             LuaObject::addOperator(L, "__mul", __mul);
             LuaObject::addOperator(L, "mul", mul);
+            LuaObject::addOperator(L, "__div", __div);
+            LuaObject::addOperator(L, "div", div);
             LuaObject::addOperator(L, "__eq", __eq);
             LuaObject::addField(L, "X", get_X, set_X, true);
             LuaObject::addField(L, "Y", get_Y, set_Y, true);
@@ -13056,6 +13174,31 @@
                 return 1;
             }
             luaL_error(L, "FRotator operator sub error, arg=%d", lua_typename(L, 2));
+            return 0;
+        }
+
+        static int __mul(lua_State* L) {
+            CheckSelf(FRotator);
+            if (lua_isnumber(L, 2)) {
+                auto Scale = LuaObject::checkValue<double>(L, 2);
+                auto ret = __newFRotator();
+                *ret = (*self * Scale);
+                LuaObject::push<FRotator>(L, "FRotator", ret, UD_AUTOGC | UD_VALUETYPE);
+                return 1;
+            }
+            luaL_error(L, "FRotator operator__mul error, arg=%d", lua_typename(L, 2));
+            return 0;
+        }
+
+        static int mul(lua_State* L) {
+            CheckSelf(FRotator);
+            if (lua_isnumber(L, 2)) {
+                auto Scale = LuaObject::checkValue<double>(L, 2);
+                *self = *self * Scale;
+                lua_pushvalue(L, 1);
+                return 1;
+            }
+            luaL_error(L, "FRotator operator mul error, arg=%d", lua_typename(L, 2));
             return 0;
         }
 
@@ -13583,6 +13726,8 @@
             LuaObject::addOperator(L, "add", add);
             LuaObject::addOperator(L, "__sub", __sub);
             LuaObject::addOperator(L, "sub", sub);
+            LuaObject::addOperator(L, "__mul", __mul);
+            LuaObject::addOperator(L, "mul", mul);
             LuaObject::addOperator(L, "__eq", __eq);
             LuaObject::addField(L, "Pitch", get_Pitch, set_Pitch, true);
             LuaObject::addField(L, "Yaw", get_Yaw, set_Yaw, true);
