@@ -36,7 +36,6 @@ namespace NS_SLUA {
 
     int LuaMap::push(lua_State* L, FProperty* keyProp, FProperty* valueProp, FScriptMap* buf, bool bIsNewInner) {
         auto luaMap = new LuaMap(keyProp, valueProp, buf, false, bIsNewInner);
-        LuaObject::addLink(L, luaMap->get());
         return LuaObject::pushType(L, luaMap, "LuaMap", setupMT, gc);
     }
 
@@ -577,8 +576,6 @@ namespace NS_SLUA {
     int LuaMap::gc(lua_State* L) {
         auto userdata = (UserData<LuaMap*>*)lua_touserdata(L, 1);
         auto self = userdata->ud;
-        if (!userdata->parent && !(userdata->flag & UD_HADFREE))
-            LuaObject::releaseLink(L, self->get());
         if (self->isRef) {
             LuaObject::unlinkProp(L, userdata);
         }

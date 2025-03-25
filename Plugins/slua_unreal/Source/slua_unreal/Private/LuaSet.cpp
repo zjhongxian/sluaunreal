@@ -97,7 +97,6 @@ namespace NS_SLUA
     int LuaSet::push(lua_State* L, FProperty* prop, FScriptSet* set, bool bIsNewInner)
     {
         LuaSet* newSet = new LuaSet(prop, set, false, bIsNewInner);
-        LuaObject::addLink(L, newSet->get());
         return push(L, newSet);
     }
 
@@ -445,8 +444,6 @@ namespace NS_SLUA
     {
         auto userdata = (UserData<LuaSet*>*)lua_touserdata(L, 1);
         auto self = userdata->ud;
-        if (!userdata->parent && !(userdata->flag & UD_HADFREE))
-            LuaObject::releaseLink(L, self->get());
         if (self->isRef) {
             LuaObject::unlinkProp(L, userdata);
         }

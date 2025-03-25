@@ -264,7 +264,6 @@ namespace NS_SLUA {
         }
 
         LuaArray* luaArrray = new LuaArray(inner, data, false, bIsNewInner);
-        LuaObject::addLink(L, luaArrray->get());
         return LuaObject::pushType(L,luaArrray,"LuaArray",setupMT,gc);
     }
 
@@ -278,7 +277,6 @@ namespace NS_SLUA {
         }
 
         LuaArray* luaArrray = new LuaArray(prop, data, false, nullptr, 0);
-        LuaObject::addLink(L, luaArrray->get());
         return LuaObject::pushType(L,luaArrray,"LuaArray",setupMT,gc);
     }
 
@@ -738,9 +736,6 @@ namespace NS_SLUA {
     int LuaArray::gc(lua_State* L) {
         auto userdata = (UserData<LuaArray*>*)lua_touserdata(L, 1);
         auto self = userdata->ud;
-        if (!userdata->parent && !(userdata->flag & UD_HADFREE)) {
-            LuaObject::releaseLink(L, self->get());
-        }
         if (self->isRef) {
             LuaObject::unlinkProp(L, userdata);
         }
