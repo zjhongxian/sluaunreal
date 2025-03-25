@@ -18,6 +18,10 @@
 #include "LuaReference.h"
 #include "LuaNetSerialization.h"
 
+#if LUA_VERSION_RELEASE_NUM >= 50406
+#include <lgc.h>
+#endif
+
 #define GET_CHECKER(tag) \
     auto tag##Checker = LuaObject::getChecker(UD->tag##Prop);\
     if (!tag##Checker) { \
@@ -528,6 +532,123 @@ namespace NS_SLUA {
         return 3;
     }
 
+    int LuaMap::PairsLessGC(lua_State* L)
+    {
+        CheckUD(LuaMap, L, 1);
+        if (!UD) {
+            luaL_error(L, "arg 1 expect LuaMap, but got nil!");
+        }
+
+        static auto structProp = FStructProperty::StaticClass();
+        auto innerClass = UD->valueProp->GetClass();
+        if (innerClass != structProp) {
+            luaL_error(L, "%s map do not support LessGC enumeration! Only struct type map are supported!", TCHAR_TO_UTF8(*innerClass->GetName()));
+        }
+
+        lua_pushinteger(L, 0);
+        lua_pushnil(L);
+        lua_pushcclosure(L, IterateLessGC, 2);
+        lua_pushvalue(L, 1);
+        lua_pushinteger(L, -1);
+        return 3;
+    }
+
+    int LuaMap::IterateLessGC(lua_State* L)
+    {
+        CheckUD(LuaMap, L, 1);
+        int index = lua_tointeger(L, lua_upvalueindex(1));
+        auto& helper = UD->helper;
+        for (; index < helper.Num(); ++index)
+        {
+            if (!helper.IsValidIndex(index))
+            {
+                continue;
+            }
+
+            auto pairPtr = helper.GetPairPtr(index);
+            auto keyPtr = UD->getKeyPtr(pairPtr);
+            auto valuePtr = UD->getValuePtr(pairPtr);
+
+            LuaObject::push(L, UD->keyProp, keyPtr);
+
+            auto genUD = (GenericUserData*)lua_touserdata(L, lua_upvalueindex(2));
+            if (!genUD)
+            {
+                LuaObject::push(L, UD->valueProp, valuePtr);
+
+                CallInfo* ci = L->ci;
+
+#if LUA_VERSION_NUM >= 504
+                #define G(L) (L->l_G)
+#endif
+
+#if LUA_VERSION_RELEASE_NUM >= 50406
+
+                auto func = ci->func.p;
+                setobjs2s(L, L->top.p, func);
+                L->top.p++;
+#else
+                auto func = ci->func;
+                setobjs2s(L, L->top, func);
+                L->top++;
+#endif
+                lua_pushinteger(L, index + 1);
+                lua_setupvalue(L, -2, 1);
+                lua_pushvalue(L, -2);
+                lua_setupvalue(L, -2, 2);
+#if LUA_VERSION_RELEASE_NUM >= 50406
+                L->top.p--;
+#else
+                L->top--;
+#endif
+            }
+            else
+            {
+                CallInfo* ci = L->ci;
+
+#if LUA_VERSION_RELEASE_NUM >= 50406
+                auto func = ci->func.p;
+                setobjs2s(L, L->top.p, func);
+                L->top.p++;
+#else
+                auto func = ci->func;
+                setobjs2s(L, L->top, func);
+                L->top++;
+#endif
+                lua_pushinteger(L, index + 1);
+                lua_setupvalue(L, -2, 1);
+#if LUA_VERSION_RELEASE_NUM >= 50406
+                L->top.p--;
+#else
+                L->top--;
+#endif
+
+#if LUA_VERSION_NUM >= 504
+#undef G
+#endif
+
+                if (genUD->flag & UD_VALUETYPE)
+                {
+                    auto valueProp = UD->valueProp;
+                    valueProp->CopyCompleteValue(genUD->ud, valuePtr);
+                }
+                else
+                {
+                    LuaStruct* ls = (LuaStruct*)genUD->ud;
+                    auto uss = ls->uss;
+                    auto buf = ls->buf;
+                    uss->CopyScriptStruct(buf, valuePtr);
+                }
+
+                lua_pushvalue(L, lua_upvalueindex(2));
+            }
+
+            return 2;
+        }
+
+        return 0;
+    }
+
     int LuaMap::Enumerable(lua_State* L) {
         CheckUD(LuaMap::Enumerator, L, 1);
         auto map = UD->map;
@@ -548,6 +669,78 @@ namespace NS_SLUA {
                 UD->index += 1;
             }
         } while (true);
+    }
+
+    int LuaMap::GetKeys(lua_State* L)
+    {
+        CheckUD(LuaMap, L, 1);
+		LuaArray* luaArray = LuaObject::checkUD<LuaArray>(L, 2);
+        auto inner = UD->keyProp;
+        if (!luaArray)
+        {
+            luaArray = new LuaArray(inner, nullptr, false, false);
+            LuaArray::push(L, luaArray);
+        }
+        else
+        {
+            LuaObject::checkContainerInnerProperty(L, 2, inner, luaArray->getInnerProp(), "Array");
+        }
+
+        auto& helper = UD->helper;
+        int32 num = helper.Num();
+        FScriptArrayHelper arrayHelper = FScriptArrayHelper::CreateHelperFormInnerProperty(inner, luaArray->get());
+        arrayHelper.EmptyValues(num);
+
+        for (int index = 0; index < num; ++index)
+        {
+            if (!helper.IsValidIndex(index))
+            {
+	            continue;
+            }
+            auto pairPtr = helper.GetPairPtr(index);
+            auto keyPtr = UD->getKeyPtr(pairPtr);
+            int32 arrayIndex = arrayHelper.AddValue();
+            uint8* dest = arrayHelper.GetRawPtr(arrayIndex);
+            inner->CopySingleValue(dest, keyPtr);
+        }
+
+        return 1;
+    }
+    
+	int LuaMap::GetValues(lua_State* L)
+    {
+        CheckUD(LuaMap, L, 1);
+        LuaArray* luaArray = LuaObject::checkUD<LuaArray>(L, 2);
+        auto inner = UD->valueProp;
+        if (!luaArray)
+        {
+            luaArray = new LuaArray(inner, nullptr, false, false);
+            LuaArray::push(L, luaArray);
+        }
+        else
+        {
+            LuaObject::checkContainerInnerProperty(L, 2, inner, luaArray->getInnerProp(), "Array");
+        }
+
+        auto& helper = UD->helper;
+        int32 num = helper.Num();
+        FScriptArrayHelper arrayHelper = FScriptArrayHelper::CreateHelperFormInnerProperty(inner, luaArray->get());
+        arrayHelper.EmptyValues(num);
+
+        for (int index = 0; index < num; ++index)
+        {
+            if (!helper.IsValidIndex(index))
+            {
+                continue;
+            }
+            auto pairPtr = helper.GetPairPtr(index);
+            auto valuePtr = UD->getValuePtr(pairPtr);
+            int32 arrayIndex = arrayHelper.AddValue();
+            uint8* dest = arrayHelper.GetRawPtr(arrayIndex);
+            inner->CopySingleValue(dest, valuePtr);
+        }
+
+        return 1;
     }
 
     int LuaMap::CreateValueTypeObject(lua_State* L) {
@@ -587,6 +780,9 @@ namespace NS_SLUA {
         LuaObject::setupMTSelfSearch(L);
 
         RegMetaMethod(L, Pairs);
+        RegMetaMethod(L, PairsLessGC);
+        RegMetaMethod(L, GetKeys);
+        RegMetaMethod(L, GetValues);
         RegMetaMethod(L, Num);
         RegMetaMethod(L, Get);
         RegMetaMethod(L, Set);

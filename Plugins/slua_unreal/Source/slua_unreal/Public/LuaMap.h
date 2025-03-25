@@ -139,7 +139,11 @@ namespace NS_SLUA {
         static int Remove(lua_State* L);
         static int Clear(lua_State* L);
         static int Pairs(lua_State* L);
+        static int PairsLessGC(lua_State* L);
+        static int IterateLessGC(lua_State* L);
         static int Enumerable(lua_State* L);
+        static int GetKeys(lua_State* L);
+        static int GetValues(lua_State* L);
         static int CreateValueTypeObject(lua_State* L);
 
     private:

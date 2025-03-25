@@ -890,18 +890,6 @@ namespace NS_SLUA {
             return pushTypeImp<T, bIsObject, bIsStruct>(L, cls, tn, setupmt, gc, nuvalues, nullptr);
         }
 
-        template<>
-        static int pushType(lua_State* L, UClass* cls, const char* tn, lua_CFunction setupmt, lua_CFunction gc, short nuvalues)
-        {
-            return pushTypeImp<UClass*, true, false>(L, cls, tn, setupmt, gc, nuvalues, "UObject");
-        }
-
-        template<>
-        static int pushType(lua_State* L, UScriptStruct* cls, const char* tn, lua_CFunction setupmt, lua_CFunction gc, short nuvalues)
-        {
-            return pushTypeImp<UScriptStruct*, true, false>(L, cls, tn, setupmt, gc, nuvalues, "UObject");
-        }
-
         static const char* getType(lua_State* L, int p);
 
         // for TSharePtr version
@@ -1122,6 +1110,8 @@ namespace NS_SLUA {
         static bool getCache(lua_State* L, const void* obj, int ref);
         static void addCache(lua_State* L, const void* obj, int ref);
         static void removeCache(lua_State* L, const void* obj, int ref);
+
+        static bool checkContainerInnerProperty(lua_State* L, int i, FProperty* expectInner, FProperty* argumentInner, const char* containerType);
         
         static ULatentDelegate* getLatentDelegate(lua_State* L);
         

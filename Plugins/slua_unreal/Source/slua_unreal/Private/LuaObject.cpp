@@ -1765,7 +1765,7 @@ namespace NS_SLUA {
         return LuaObject::push(L, e);
     }
 
-    bool checkContainerInnerProperty(lua_State* L, int i, FProperty* expectInner, FProperty* argumentInner, const char* containerType)
+    bool LuaObject::checkContainerInnerProperty(lua_State* L, int i, FProperty* expectInner, FProperty* argumentInner, const char* containerType)
     {
         auto expectInnerClass = expectInner->GetClass();
         auto argumentInnerClass = argumentInner->GetClass();
@@ -1808,7 +1808,7 @@ namespace NS_SLUA {
             LuaArray* luaArrray = LuaObject::checkUD<LuaArray>(L,i);
             if (luaArrray)
             {
-                checkContainerInnerProperty(L, i, p->Inner, luaArrray->getInnerProp(), "Array");
+                LuaObject::checkContainerInnerProperty(L, i, p->Inner, luaArrray->getInnerProp(), "Array");
                 LuaArray::clone(luaArrray->get(), p->Inner, v);
                 lua_pushvalue(L, i);
                 return 1;
@@ -1826,8 +1826,8 @@ namespace NS_SLUA {
             LuaMap* luaMap = LuaObject::checkUD<LuaMap>(L,i);
             if (luaMap)
             {
-                checkContainerInnerProperty(L, i, p->KeyProp, luaMap->getKeyProp(), "Map Key");
-                checkContainerInnerProperty(L, i, p->ValueProp, luaMap->getValueProp(), "Map Value");
+                LuaObject::checkContainerInnerProperty(L, i, p->KeyProp, luaMap->getKeyProp(), "Map Key");
+                LuaObject::checkContainerInnerProperty(L, i, p->ValueProp, luaMap->getValueProp(), "Map Value");
                 LuaMap::clone(luaMap->get(), p->KeyProp, p->ValueProp, v);
                 lua_pushvalue(L, i);
                 return 1;
@@ -1845,7 +1845,7 @@ namespace NS_SLUA {
             LuaSet* luaSet = LuaObject::checkUD<LuaSet>(L,i);
             if (luaSet)
             {
-                checkContainerInnerProperty(L, i, p->ElementProp, luaSet->getInnerProp(), "Set");
+                LuaObject::checkContainerInnerProperty(L, i, p->ElementProp, luaSet->getInnerProp(), "Set");
                 LuaSet::clone(luaSet->get(), p->ElementProp, v);
                 lua_pushvalue(L, i);
                 return 1;
@@ -1931,7 +1931,7 @@ namespace NS_SLUA {
         if (!UD)
             luaL_error(L, "expect LuaArray at %d, but got nil", i);
 
-        checkContainerInnerProperty(L, i, p->Inner, UD->getInnerProp(), "Array");
+        LuaObject::checkContainerInnerProperty(L, i, p->Inner, UD->getInnerProp(), "Array");
         
 #if (ENGINE_MINOR_VERSION<25) && (ENGINE_MAJOR_VERSION==4)
         auto outerFunc = Cast<UFunction>(p->GetOuter());
@@ -1982,8 +1982,8 @@ namespace NS_SLUA {
         if (!UD)
             luaL_error(L, "expect LuaMap at %d, but got nil", i);
 
-        checkContainerInnerProperty(L, i, p->KeyProp, UD->getKeyProp(), "Map Key");
-        checkContainerInnerProperty(L, i, p->ValueProp, UD->getValueProp(), "Map Value");
+        LuaObject::checkContainerInnerProperty(L, i, p->KeyProp, UD->getKeyProp(), "Map Key");
+        LuaObject::checkContainerInnerProperty(L, i, p->ValueProp, UD->getValueProp(), "Map Value");
 
         auto scriptMap = (FScriptMap*)parms;
 #if (ENGINE_MINOR_VERSION<25) && (ENGINE_MAJOR_VERSION==4)
@@ -2032,7 +2032,7 @@ namespace NS_SLUA {
         if (!UD)
             luaL_error(L, "expect LuaSet at %d, but got nil", i);
 
-        checkContainerInnerProperty(L, i, p->ElementProp, UD->getInnerProp(), "Set");
+        LuaObject::checkContainerInnerProperty(L, i, p->ElementProp, UD->getInnerProp(), "Set");
 
         auto scriptSet = (FScriptSet*)params;
 #if (ENGINE_MINOR_VERSION<25) && (ENGINE_MAJOR_VERSION==4)
@@ -2517,6 +2517,18 @@ namespace NS_SLUA {
         return ls->buf;
     }
 
+    template<>
+    int LuaObject::pushType(lua_State* L, UClass* cls, const char* tn, lua_CFunction setupmt, lua_CFunction gc, short nuvalues)
+    {
+        return pushTypeImp<UClass*, true, false>(L, cls, tn, setupmt, gc, nuvalues, "UObject");
+    }
+
+    template<>
+    int LuaObject::pushType(lua_State* L, UScriptStruct* cls, const char* tn, lua_CFunction setupmt, lua_CFunction gc, short nuvalues)
+    {
+        return pushTypeImp<UScriptStruct*, true, false>(L, cls, tn, setupmt, gc, nuvalues, "UObject");
+    }
+
     const char* LuaObject::getType(lua_State* L, int p) {
         if (!lua_isuserdata(L, p)) {
             return "";
@@ -2915,7 +2927,6 @@ namespace NS_SLUA {
         lua_pushstring(L, TCHAR_TO_UTF8(*e->GetPathName()));
         lua_setfield(L, -2, SLUA_CPPINST);
 
-        int num = e->NumEnums();
         for (int i = 0; i < num; i++) {
             FString name;
             // if is bp enum, can't get name as key
