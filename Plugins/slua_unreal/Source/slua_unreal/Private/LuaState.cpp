@@ -45,7 +45,6 @@ namespace NS_SLUA {
     FLuaStateInitEvent LuaState::onInitEvent;
     
     const int MaxLuaExecTime = 60; // in second
-    const int MaxLuaGCCount = 8192;
 
     static float GCStructTimeLimit = 0.001f;
 
@@ -130,13 +129,13 @@ namespace NS_SLUA {
 
     int LuaState::loader(lua_State* L) {
         LuaState* state = LuaState::get(L);
-        const char* fn = lua_tostring(L,1);
+        const char* fn = lua_tostring(L, 1);
         FString filepath;
         TArray<uint8> buf = state->loadFile(fn, filepath);
-        if(buf.Num() > 0) {
+        if (buf.Num() > 0) {
             char chunk[256];
-            snprintf(chunk,256,"@%s",TCHAR_TO_UTF8(*filepath));
-            if(luaL_loadbuffer(L,(const char*)buf.GetData(),buf.Num(),chunk)==0) {
+            snprintf(chunk, 256, "@%s", TCHAR_TO_UTF8(*filepath));
+            if (luaL_loadbuffer(L, (const char*)buf.GetData(), buf.Num(), chunk) == 0) {
                 return 1;
             }
             else {

@@ -52,7 +52,7 @@ namespace NS_SLUA {
         
         template<typename K,typename V>
         static typename std::enable_if<DeduceType<K>::value != EPropertyClass::Struct && DeduceType<V>::value != EPropertyClass::Struct, int>::type
-    	push(lua_State* L, const TMap<K, V>& v) {
+        push(lua_State* L, const TMap<K, V>& v) {
             FProperty* keyProp = PropertyProto::createDeduceProperty<K>();
             FProperty* valueProp = PropertyProto::createDeduceProperty<V>();
             return push(L, keyProp, valueProp, reinterpret_cast<FScriptMap*>(const_cast<TMap<K, V>*>(&v)), false);

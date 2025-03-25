@@ -434,7 +434,7 @@ namespace NS_SLUA {
 
         if (!valuePtr)
         {
-        	luaL_error(L, "Map key[%s] not found!", lua_tostring(L, 2));
+            luaL_error(L, "Map key[%s] not found!", lua_tostring(L, 2));
             return 0;
         }
 
