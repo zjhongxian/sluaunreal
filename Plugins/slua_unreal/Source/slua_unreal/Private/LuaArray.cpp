@@ -75,7 +75,10 @@ namespace NS_SLUA {
         else
         {
             array = new FScriptArray();
-            clone(array, p, buf);
+            if (buf)
+            {
+            	clone(array, p, buf);
+            }
         }
     }
 
