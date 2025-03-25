@@ -27,6 +27,7 @@
 
 #define SLUA_LUACODE "[sluacode]"
 #define SLUA_CPPINST "__cppinst"
+#define SLUA_ENUMINDEX "__enum"
 
 class ULatentDelegate;
 

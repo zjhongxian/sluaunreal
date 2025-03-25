@@ -2815,6 +2815,89 @@ namespace NS_SLUA {
         return 0;
     }
 
+    int enumNext(lua_State* L)
+    {
+        lua_settop(L, 2);
+
+        if (lua_getfield(L, 1, SLUA_ENUMINDEX))
+        {
+            lua_pushvalue(L, 2);
+            if (lua_gettable(L, -2))
+            {
+                int index = lua_tointeger(L, -1);
+                lua_pop(L, 1);
+
+                lua_pushinteger(L, index + 1);
+                if (lua_gettable(L, -2))
+                {
+                    lua_pushvalue(L, -1);
+                    lua_gettable(L, 1);
+                    return 2;
+                }
+            }
+            else
+                lua_pop(L, 1);
+        }
+        
+        return 0;
+    }
+
+    int enumPairs(lua_State* L)
+    {
+        lua_pushstring(L, SLUA_ENUMINDEX);
+        if (!lua_rawget(L, 1))
+        {
+            lua_pushstring(L, SLUA_CPPINST);
+            lua_rawget(L, 1);
+            int t = lua_type(L, -1);
+            UEnum* e = nullptr;
+            if (t == LUA_TSTRING) { // SLUA_CPPINST is saved as PathName
+                FString path(UTF8_TO_TCHAR(lua_tostring(L, -1)));
+#if ENGINE_MAJOR_VERSION==5 && ENGINE_MINOR_VERSION>0
+                static UPackage* AnyPackage = (UPackage*)-1;
+#else
+                static UPackage* AnyPackage = ANY_PACKAGE;
+#endif
+                e = FindObject<UEnum>(AnyPackage, *path);
+                if (!e) {
+                    e = LoadObject<UEnum>(NULL, *path);
+                }
+            }
+            lua_pop(L, 1);
+
+            if (e)
+            {
+                bool isbpEnum = Cast<UUserDefinedEnum>(e) != nullptr;
+                int num = e->NumEnums();
+
+                lua_createtable(L, num, num);
+                for (int i = 0; i < num; i++) {
+                    FString name;
+                    // if is bp enum, can't get name as key
+                    if (isbpEnum)
+                        name = *FTextInspector::GetSourceString(e->GetDisplayNameTextByIndex(i));
+                    else
+                        name = e->GetNameStringByIndex(i);
+                    
+                    lua_pushstring(L, TCHAR_TO_UTF8(*name));
+                    lua_pushvalue(L, -1);
+                    lua_rawseti(L, -3, i + 1);
+
+                    lua_pushinteger(L, i + 1);
+                    lua_settable(L, -3);
+                }
+
+                lua_setfield(L, 1, SLUA_ENUMINDEX);
+            }
+        }
+        lua_pop(L, 1);
+
+        lua_pushcfunction(L, enumNext);
+        lua_pushvalue(L, 1);
+        lua_pushinteger(L, 1);
+        return 3;
+    }
+
     int LuaObject::pushEnum(lua_State* L, UEnum* e)
     {
         LuaState* ls = LuaState::get(L);
@@ -2823,8 +2906,10 @@ namespace NS_SLUA {
             return 1;
 
         bool isbpEnum = Cast<UUserDefinedEnum>(e) != nullptr;
+        int num = e->NumEnums();
+
         // return a enum as table
-        lua_newtable(L);
+        lua_createtable(L, 0, num + 2);
 
         // save SLUA_CPPINST as PathName
         lua_pushstring(L, TCHAR_TO_UTF8(*e->GetPathName()));
@@ -2847,6 +2932,10 @@ namespace NS_SLUA {
         {
             lua_pushcfunction(L, enumIndex);
             lua_setfield(L, -2, "__index");
+            lua_pushcfunction(L, enumNext);
+            lua_setfield(L, -2, "__next");
+            lua_pushcfunction(L, enumPairs);
+            lua_setfield(L, -2, "__pairs");
         }
         lua_setmetatable(L, -2);
 
