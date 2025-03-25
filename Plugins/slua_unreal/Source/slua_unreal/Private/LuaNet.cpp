@@ -592,23 +592,24 @@ namespace NS_SLUA
                 auto keyCls = key.Get();
                 if (keyCls && keyCls != cls && key->IsChildOf(cls))
                 {
-                    if (FClassNetCache** keyClassNetCache = netCacheMap.Find(key))
-                    {
-                        delete *keyClassNetCache;
-                    }
+
 #if !((ENGINE_MINOR_VERSION<20) && (ENGINE_MAJOR_VERSION==4))
                     const_cast<UClass*>(keyCls)->ClassFlags &= ~CLASS_ReplicationDataIsSetUp;
 #endif
-                    netCacheMap.Remove(key);
+                    if (FClassNetCache** keyClassNetCache = netCacheMap.Find(key))
+                    {
+                        delete *keyClassNetCache;
+                        netCacheMap.Remove(key);
+                    }
                 }
             }
 
+#if !((ENGINE_MINOR_VERSION<20) && (ENGINE_MAJOR_VERSION==4))
+            cls->ClassFlags &= ~CLASS_ReplicationDataIsSetUp;
+#endif
             if (FClassNetCache** classNetCache = netCacheMap.Find(cls))
             {
                 delete *classNetCache;
-#if !((ENGINE_MINOR_VERSION<20) && (ENGINE_MAJOR_VERSION==4))
-                cls->ClassFlags &= ~CLASS_ReplicationDataIsSetUp;
-#endif
                 netCacheMap.Remove(cls);
             }
 
