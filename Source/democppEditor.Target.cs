@@ -13,6 +13,10 @@ public class democppEditorTarget : TargetRules
 		WindowsPlatform.bStrictConformanceMode = true;
 #endif
 
+#if UE_5_5_OR_LATER
+		CppStandard = CppStandardVersion.Cpp20;
+#endif
+
 		ExtraModuleNames.AddRange( new string[] { "democpp" } );
 	}
 }

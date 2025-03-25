@@ -11,6 +11,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
 // See the License for the specific language governing permissions and limitations under the License.
 
+#include "SluaMicro.h"
 #include "Brushes/SlateColorBrush.h"
 #include "Widgets/Input/SCheckBox.h"
 #include "Widgets/Images/SImage.h"
@@ -579,7 +580,9 @@ TSharedRef<class SDockTab>  SProfilerInspector::GetSDockTab()
 
     // init tree view
     SAssignNew(treeview, STreeView<TSharedPtr<FunctionProfileNode>>)
+#if !UE_5_5_OR_LATER
     .ItemHeight(800)
+#endif
     .TreeItemsSource(&profileRootArr)
     .OnGenerateRow_Raw(this, &SProfilerInspector::OnGenerateRowForList)
     .OnGetChildren_Raw(this, &SProfilerInspector::OnGetChildrenForTree)
@@ -631,7 +634,9 @@ TSharedRef<class SDockTab>  SProfilerInspector::GetSDockTab()
     );
     
     SAssignNew(memTreeView, STreeView<TSharedPtr<FileMemInfo>>)
+#if !UE_5_5_OR_LATER
     .ItemHeight(800)
+#endif
     .TreeItemsSource(&shownParentFileName)
     .OnGenerateRow_Raw(this, &SProfilerInspector::OnGenerateMemRowForList)
     .OnGetChildren_Raw(this, &SProfilerInspector::OnGetMemChildrenForTree)
@@ -1294,7 +1299,11 @@ void SProfilerInspector::CombineSameFileInfo(FProflierMemNode& proflierMemNode, 
 
     if (shownParentFileName.Num() > maxMemoryFile)
     {
+#if UE_5_5_OR_LATER
+        shownParentFileName.RemoveAt(maxMemoryFile, shownParentFileName.Num() - maxMemoryFile, EAllowShrinking::No);
+#else
         shownParentFileName.RemoveAt(maxMemoryFile, shownParentFileName.Num() - maxMemoryFile, false);
+#endif
     }
 }
 

@@ -782,7 +782,7 @@ bool FLuaNetSerialization::CompareProperties(UObject* obj, NS_SLUA::FLuaNetSeria
                 auto &arrayMark = proxy.arrayDirtyMark[flatOffset];
                 auto &arrayPropInfo = flatArrayPropInfos[flatOffset];
                 int32 innerPropNum = arrayPropInfo.innerPropertyNum;
-                int32 elementSize = innerProp->ElementSize;
+                int32 elementSize = NS_SLUA::getPropertySize(innerProp);
                 auto& arrayFlatProperties = arrayPropInfo.properties;
                 
                 uint8* arrayData = newArrayHelper.GetRawPtr(0);

@@ -20,6 +20,7 @@
 #include "slua_profile_inspector.h"
 #include "LuaMemoryProfile.h"
 #include "slua_profile.h"
+#include "Runtime/Launch/Resources/Version.h"
 
 /** Declares a log category for this module. */
 DECLARE_LOG_CATEGORY_EXTERN(LogSluaProfile, Log, All);

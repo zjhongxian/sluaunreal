@@ -54,10 +54,11 @@ namespace NS_SLUA {
         helper.Resize(srcArray->Num());
         uint8* dest = helper.GetRawPtr();
         uint8* src = (uint8*)srcArray->GetData();
+        int32 propertySize = getPropertySize(p);
         for(int n=0;n<srcArray->Num();n++) {
             p->CopySingleValue(dest,src);
-            dest+=p->ElementSize;
-            src+=p->ElementSize;
+            dest+= propertySize;
+            src+= propertySize;
         }
     }
 
@@ -137,17 +138,18 @@ namespace NS_SLUA {
     void LuaArray::clear() {
         if(!inner) return;
 
+        int32 propertySize = getPropertySize(inner);
         if (!isRef) {
             uint8 *Dest = getRawPtr(0);
-            for (int32 i = 0; i < array->Num(); i++, Dest += inner->ElementSize)
+            for (int32 i = 0; i < array->Num(); i++, Dest += propertySize)
             {
                 inner->DestroyValue(Dest);
             }
         }
 #if ENGINE_MAJOR_VERSION==5
-        array->Empty(0, inner->ElementSize, GetPropertyAlignment(inner));
+        array->Empty(0, propertySize, getPropertyAlignment(inner));
 #else
-        array->Empty(0, inner->ElementSize);
+        array->Empty(0, propertySize);
 #endif
     }
 
@@ -184,7 +186,7 @@ namespace NS_SLUA {
     }
 
     uint8* LuaArray::getRawPtr(int index) const {
-        return (uint8*)array->GetData() + index * inner->ElementSize;
+        return (uint8*)array->GetData() + index * getPropertySize(inner);
     }
 
     bool LuaArray::isValidIndex(int index) const {
@@ -197,9 +199,9 @@ namespace NS_SLUA {
 
     uint8* LuaArray::add() {
 #if ENGINE_MAJOR_VERSION==5
-        const int index = array->Add(1, inner->ElementSize, GetPropertyAlignment(inner));
+        const int index = array->Add(1, getPropertySize(inner), getPropertyAlignment(inner));
 #else
-        const int index = array->Add(1, inner->ElementSize);
+        const int index = array->Add(1, getPropertySize(inner));
 #endif
         
         constructItems(index, 1);
@@ -208,9 +210,9 @@ namespace NS_SLUA {
 
     uint8* LuaArray::insert(int index) {
 #if ENGINE_MAJOR_VERSION==5
-        array->Insert(index, 1, inner->ElementSize, GetPropertyAlignment(inner));
+        array->Insert(index, 1, getPropertySize(inner), getPropertyAlignment(inner));
 #else
-        array->Insert(index, 1, inner->ElementSize);
+        array->Insert(index, 1, getPropertySize(inner));
 #endif
         
         constructItems(index, 1);
@@ -220,9 +222,9 @@ namespace NS_SLUA {
     void LuaArray::remove(int index) {
         destructItems(index, 1);
 #if ENGINE_MAJOR_VERSION==5
-        array->Remove(index, 1, inner->ElementSize, GetPropertyAlignment(inner));
+        array->Remove(index, 1, getPropertySize(inner), getPropertyAlignment(inner));
 #else
-        array->Remove(index, 1, inner->ElementSize);
+        array->Remove(index, 1, getPropertySize(inner));
 #endif  
     }
 
@@ -232,7 +234,8 @@ namespace NS_SLUA {
         if (!(inner->PropertyFlags & (CPF_IsPlainOldData | CPF_NoDestructor)))
         {
             uint8 *Dest = getRawPtr(index);
-            for (int32 i = 0 ; i < count; i++, Dest += inner->ElementSize)
+            int32 propertySize = getPropertySize(inner);
+            for (int32 i = 0 ; i < count; i++, Dest += propertySize)
             {
                 inner->DestroyValue(Dest);
             }
@@ -241,13 +244,14 @@ namespace NS_SLUA {
 
     void LuaArray::constructItems(int index,int count) {
         uint8 *Dest = getRawPtr(index);
+        int32 propertySize = getPropertySize(inner);
         if (inner->PropertyFlags & CPF_ZeroConstructor)
         {
-            FMemory::Memzero(Dest, count * inner->ElementSize);
+            FMemory::Memzero(Dest, count * propertySize);
         }
         else
         {
-            for (int32 i = 0 ; i < count; i++, Dest += inner->ElementSize)
+            for (int32 i = 0 ; i < count; i++, Dest += propertySize)
             {
                 inner->InitializeValue(Dest);
             }
@@ -614,7 +618,7 @@ namespace NS_SLUA {
         if (arr->IsValidIndex(index))
         {
             auto element = UD->inner;
-            auto es = element->ElementSize;
+            auto es = getPropertySize(element);
             auto parms = ((uint8*)arr->GetData()) + index * es;
             lua_pushinteger(L, index);
             LuaObject::push(L, element, parms);
@@ -644,7 +648,7 @@ namespace NS_SLUA {
         if (arr->IsValidIndex(index))
         {
             auto element = UD->inner;
-            auto es = element->ElementSize;
+            auto es = getPropertySize(element);
             auto parms = ((uint8*)arr->GetData()) + index * es;
             lua_pushinteger(L, index);
 

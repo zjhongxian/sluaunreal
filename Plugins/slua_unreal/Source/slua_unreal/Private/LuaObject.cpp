@@ -1919,7 +1919,7 @@ namespace NS_SLUA {
             size_t len;
             uint8* content = (uint8*)lua_tolstring(L, i, &len);
 #if ENGINE_MAJOR_VERSION==5
-            scriptArray->Add((int32)len, 1, GetPropertyAlignment(p->Inner));
+            scriptArray->Add((int32)len, 1, getPropertyAlignment(p->Inner));
 #else
             scriptArray->Add((int32)len, 1);
 #endif

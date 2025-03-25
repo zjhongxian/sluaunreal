@@ -27,7 +27,11 @@ public class slua_profile : ModuleRules
 #else
         bEnforceIWYU = false;
 #endif
+#if UE_5_5_OR_LATER
+	    UndefinedIdentifierWarningLevel = WarningLevel.Off;
+#else
         bEnableUndefinedIdentifierWarnings = false;
+#endif
 
         PrivateDependencyModuleNames.AddRange(new string[] { "slua_unreal" });
         PublicIncludePathModuleNames.AddRange(new string[] { "slua_unreal" });

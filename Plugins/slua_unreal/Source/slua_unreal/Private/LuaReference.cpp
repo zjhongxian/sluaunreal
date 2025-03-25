@@ -64,10 +64,11 @@ namespace NS_SLUA {
                 return false;
             
             bool ret = false;
+            int32 propertySize = getPropertySize(p);
             for (int32 n = 0; n < p->ArrayDim; ++n)
             {
                 bool valuesChanged = false;
-                FScriptSetHelper helper(p, (uint8*)base + n * p->ElementSize);
+                FScriptSetHelper helper(p, (uint8*)base + n * propertySize);
 
                 for (int32 index = 0; index < helper.GetMaxIndex(); ++index)
                 {
@@ -93,11 +94,12 @@ namespace NS_SLUA {
                 return false;
             
             bool ret = false;
+            int32 propertySize = getPropertySize(p);
             for (int n = 0; n < p->ArrayDim; ++n)
             {
                 bool keyChanged = false;
                 bool valuesChanged = false;
-                FScriptMapHelper helper(p, (uint8*)base + n * p->ElementSize);
+                FScriptMapHelper helper(p, (uint8*)base + n * propertySize);
 
                 for (int index = 0; index < helper.GetMaxIndex(); ++index)
                 {
@@ -151,9 +153,10 @@ namespace NS_SLUA {
                 return false;
             
             bool ret = false;
+            int32 propertySize = getPropertySize(p);
             for (int n = 0; n < p->ArrayDim; ++n)
             {
-                FScriptArrayHelper helper(p, (uint8*)base + n * p->ElementSize);
+                FScriptArrayHelper helper(p, (uint8*)base + n * propertySize);
                 for (int32 index = 0; index < helper.Num(); ++index)
                 {
                     ret |= addRefByProperty(collector, p->Inner, helper.GetRawPtr(index));

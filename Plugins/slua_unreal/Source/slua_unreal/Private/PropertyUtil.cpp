@@ -14,9 +14,12 @@
 #include "PropertyUtil.h"
 #include "UObject/UObjectGlobals.h"
 #include "UObject/StrongObjectPtr.h"
-#include "UObject/UnrealType.h"
+#include "UObject/TextProperty.h"
 #if ENGINE_MAJOR_VERSION==5
 #include "UObject/UnrealTypePrivate.h"
+#if ENGINE_MINOR_VERSION>=5
+#include "EnumProperty.h"
+#endif
 #endif
 
 namespace NS_SLUA {

@@ -273,7 +273,11 @@ namespace NS_SLUA {
                 else if (t == LUA_TSTRING) { // SLUA_CPPINST is saved as PathName
                     FString path(UTF8_TO_TCHAR(lua_tostring(L, -1)));
 #if ENGINE_MAJOR_VERSION==5 && ENGINE_MINOR_VERSION>0
+#if ENGINE_MINOR_VERSION <= 4
                     static UPackage* AnyPackage = (UPackage*)-1;
+#else
+                    static UObject* AnyPackage = (UObject*)-1;
+#endif
 #else
                     static UPackage* AnyPackage = ANY_PACKAGE;
 #endif

@@ -10,12 +10,18 @@
 #endif
 
 #include "CoreMinimal.h"
+#include "UnrealType.h"
 #include "UObject/CoreNative.h"
 #include "Runtime/Launch/Resources/Version.h"
 
 namespace NS_SLUA
 {
     //typedef lua_State lua_State; // For PUBG Mobile
+#if ENGINE_MAJOR_VERSION == 5 && ENGINE_MINOR_VERSION >= 5
+#define UE_5_5_OR_LATER 1
+#else
+#define UE_5_5_OR_LATER 0
+#endif
 
 #if (ENGINE_MINOR_VERSION<25) && (ENGINE_MAJOR_VERSION==4)
     #define CastField Cast
@@ -63,4 +69,13 @@ namespace NS_SLUA
 #else
     typedef FNativeFuncPtr FNativeFuncPtr;
 #endif
+
+    inline int32 getPropertySize(const FProperty* prop)
+    {
+#if UE_5_5_OR_LATER
+        return prop->GetElementSize();
+#else
+	    return prop->ElementSize;
+#endif
+    }
 }

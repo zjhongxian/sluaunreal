@@ -26,7 +26,11 @@ public class slua_unreal : ModuleRules
 #else
         bEnforceIWYU = false;
 #endif
+#if UE_5_5_OR_LATER
+	    UndefinedIdentifierWarningLevel = WarningLevel.Off;
+#else
         bEnableUndefinedIdentifierWarnings = false;
+#endif
 
         var externalSource = Path.Combine(PluginDirectory, "External");
         var externalLib = Path.Combine(PluginDirectory, "Library");
@@ -78,7 +82,6 @@ public class slua_unreal : ModuleRules
         PublicDependencyModuleNames.AddRange(
             new string[]
             {
-                "Core",
                 // ... add other public dependencies that you statically link with here ...
             }
             );
@@ -92,6 +95,7 @@ public class slua_unreal : ModuleRules
         PrivateDependencyModuleNames.AddRange(
             new string[]
             {
+	            "Core",
                 "CoreUObject",
                 "Engine",
                 "Slate",

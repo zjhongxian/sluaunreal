@@ -51,7 +51,7 @@ namespace NS_SLUA {
     DefDeduceType(FString, Str);
 
 #if ENGINE_MAJOR_VERSION==5
-    FORCEINLINE int32 GetPropertyAlignment(FProperty* InProperty)
+    FORCEINLINE int32 getPropertyAlignment(FProperty* InProperty)
     {
         return InProperty->GetMinAlignment();
     }

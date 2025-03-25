@@ -34,6 +34,8 @@ namespace NS_SLUA {
     #include "LuaWrapper5.3Head.inc"
 #elif (ENGINE_MINOR_VERSION==4)
     #include "LuaWrapper5.4Head.inc"
+#elif (ENGINE_MINOR_VERSION==5)
+    #include "LuaWrapper5.5Head.inc"
 #endif
 #endif
     DefTypeName(FSoftObjectPtr);

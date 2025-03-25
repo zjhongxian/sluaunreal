@@ -119,7 +119,11 @@ namespace NS_SLUA {
     void LuaState::decreaseCallStack()
     {
         currentCallStack--;
+#if UE_5_5_OR_LATER
+        newObjectsInCallStack.Pop(EAllowShrinking::No);
+#else
         newObjectsInCallStack.Pop(false);
+#endif
     }
 
     bool LuaState::hasObjectInStack(const UObject* obj, int stackLayer)
@@ -705,6 +709,8 @@ namespace NS_SLUA {
         auto& propList = *propLinksPtr;
 #if (ENGINE_MINOR_VERSION<25) && (ENGINE_MAJOR_VERSION==4)
         propList.RemoveSwap(propud);
+#elif UE_5_5_OR_LATER
+        propList.RemoveSwap(propud, EAllowShrinking::No);
 #else
         propList.RemoveSwap(propud, false);
 #endif

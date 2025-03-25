@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and limitations under the License.
 
 #pragma once
+#include "SluaMicro.h"
 #include "CoreMinimal.h"
 #include "LuaState.h"
 #include "LuaBitArray.h"
@@ -29,12 +30,12 @@ namespace NS_SLUA
         
         typedef TMap<FString, ReplicateIndexType> ReplicatedNameToIndexMap;
         typedef TArray<FString> ReplicatedIndexToNameMap;
-        typedef TArray<NS_SLUA::FProperty*> ReplicatedProperties;
+        typedef TArray<FProperty*> ReplicatedProperties;
 
     #if (ENGINE_MINOR_VERSION<25) && (ENGINE_MAJOR_VERSION==4)
-        TWeakObjectPtr<NS_SLUA::FProperty> ownerProperty;
+        TWeakObjectPtr<FProperty> ownerProperty;
     #else
-        TWeakFieldPtr<NS_SLUA::FProperty> ownerProperty;
+        TWeakFieldPtr<FProperty> ownerProperty;
     #endif
         ReplicatedNameToIndexMap replicatedNameToIndexMap;
         ReplicatedIndexToNameMap replicatedIndexToNameMap;
