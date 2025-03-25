@@ -660,8 +660,7 @@ namespace NS_SLUA {
     }
 
     void LuaState::addLink(void* address) {
-        if (!propLinks.Contains(address))
-            propLinks.Add(address);
+        propLinks.FindOrAdd(address);
     }
 
     void LuaState::releaseLink(void* address) {
