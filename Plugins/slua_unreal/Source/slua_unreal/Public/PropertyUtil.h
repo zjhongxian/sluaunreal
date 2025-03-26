@@ -50,13 +50,6 @@ namespace NS_SLUA {
     DefDeduceType(UObject*, Object);
     DefDeduceType(FString, Str);
 
-#if ENGINE_MAJOR_VERSION==5
-    FORCEINLINE int32 getPropertyAlignment(FProperty* InProperty)
-    {
-        return InProperty->GetMinAlignment();
-    }
-#endif
-
     // definition of property
     struct SLUA_UNREAL_API PropertyProto {
         PropertyProto(EPropertyClass t) :type(t), subType(EPropertyClass::Byte), cls(nullptr), scriptStruct(nullptr)

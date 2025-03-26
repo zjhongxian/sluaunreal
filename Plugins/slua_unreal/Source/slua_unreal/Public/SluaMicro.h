@@ -79,4 +79,11 @@ namespace NS_SLUA
 	    return prop->ElementSize;
 #endif
     }
+
+#if ENGINE_MAJOR_VERSION==5
+    FORCEINLINE int32 getPropertyAlignment(FProperty* prop)
+    {
+        return prop->GetMinAlignment();
+    }
+#endif
 }
