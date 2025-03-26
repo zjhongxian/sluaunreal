@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-//#include <lstate.h> // For PUBG Mobile
+#include <lstate.h>
 #ifdef G
     #undef G
 #endif
@@ -10,17 +10,18 @@
 #endif
 
 #include "CoreMinimal.h"
-#include "UnrealType.h"
 #include "UObject/CoreNative.h"
 #include "Runtime/Launch/Resources/Version.h"
 
 namespace NS_SLUA
 {
-    //typedef lua_State lua_State; // For PUBG Mobile
+    typedef lua_State lua_State;
+#ifndef UE_5_5_OR_LATER
 #if ENGINE_MAJOR_VERSION == 5 && ENGINE_MINOR_VERSION >= 5
 #define UE_5_5_OR_LATER 1
 #else
 #define UE_5_5_OR_LATER 0
+#endif
 #endif
 
 #if (ENGINE_MINOR_VERSION<25) && (ENGINE_MAJOR_VERSION==4)

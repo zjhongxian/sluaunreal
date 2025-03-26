@@ -154,7 +154,6 @@ namespace NS_SLUA
         , bRun(false)
     {
         int32 NewSize = 0;
-        // Socket->IsNotEncrypt = true; // For PUBG Mobile
         Socket->SetReceiveBufferSize(2 * 1024 * 1024, NewSize);
         Socket->SetSendBufferSize(2 * 1024 * 1024, NewSize);
     }
