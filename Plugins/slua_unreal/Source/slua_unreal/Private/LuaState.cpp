@@ -361,6 +361,9 @@ namespace NS_SLUA {
                 for (double start = FPlatformTime::Seconds(), now = start; stepCount < stepGCCountLimit &&
                     now - start + stepCost < stepGCTimeLimit; stepCount++)
                 {
+#if !UE_BUILD_SHIPPING
+                    PROFILER_WATCHER_X(stepTimes, "StepGCTimes");
+#endif
                     if (lua_gc(L, LUA_GCSTEP, 0)) {
                         lastFullGCSeconds = FPlatformTime::Seconds();
 #if !UE_BUILD_SHIPPING
