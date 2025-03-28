@@ -18,7 +18,7 @@
 #if ENGINE_MAJOR_VERSION==5
 #include "UObject/UnrealTypePrivate.h"
 #if ENGINE_MINOR_VERSION>=5
-#include "EnumProperty.h"
+#include "UObject/EnumProperty.h"
 #endif
 #endif
 
