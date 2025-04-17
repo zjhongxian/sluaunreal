@@ -1752,7 +1752,7 @@ namespace NS_SLUA {
 
     template<typename T>
     int pushUProperty(lua_State* L,FProperty* prop,uint8* parms,int i,NewObjectRecorder* objRecorder) {
-        auto p= (T*)prop;
+        auto p= CastField<T>(prop);
         return LuaObject::push(L,p->GetPropertyValue(parms));
     }
 
