@@ -567,6 +567,11 @@ namespace NS_SLUA {
 #else
         L = lua_newstate([](void *ud, void *ptr, size_t osize, size_t nsize)
         {
+			if (nsize == 0)
+			{
+				FMemory::Free(ptr);
+				return nullptr;
+			}
             return FMemory::Realloc(ptr, nsize);
         }, nullptr);
 #endif
